@@ -8,13 +8,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,9 +32,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int mPrevSelectedId;
     private int mSelectedId;
     private final Handler mDrawerHandler = new Handler();
+    private Toolbar toolbar;
     DrawerLayout drawer;
 
 
@@ -45,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle(getResources().getString(R.string.app_name));
+        toolbar.setOverflowIcon(ContextCompat.getDrawable(this, R.drawable.ic_search_black_24dp));
          drawer = findViewById(R.id.drawer_layout);
         final NavigationView navigationView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -74,16 +76,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void navigate(final int itemId) {
-        final View elevation = findViewById(R.id.elevation);
         Fragment navFragment = null;
         switch (itemId) {
             case R.id.nav_home:
-                mPrevSelectedId = itemId;
                 setTitle(R.string.menu_home);
                 navFragment = new HomeFragment() ;
                 break;
             case R.id.nav_friend:
-                mPrevSelectedId = itemId;
                 setTitle(R.string.menu_language);
                 navFragment = new Friends();
                 break;
@@ -118,9 +117,13 @@ public class MainActivity extends AppCompatActivity {
                      if (which == 0){
                          setLocale("en");
                          recreate();
+                         finish();
+                         startActivity(getIntent());
                      }else {
                          setLocale("ku");
                          recreate();
+                         finish();
+                         startActivity(getIntent());
                      }
             }
         });
