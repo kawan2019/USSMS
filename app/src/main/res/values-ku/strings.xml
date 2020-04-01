@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">USSMS</string>
+    <string name="profile">پڕۆفایل</string>
+    <string name="posts">پۆستەکان</string>
+    <string name="login">چونە ژوورەوە</string>
+    <string name="change_language">گۆڕینی زمان</string>
+    <string name="application_setting">ڕێکخستی ئەپ</string>
+    <string name="share">شەیر</string>
+    <string name="about">دەربارە</string>
+    <string name="open">کردنەوە</string>
+    <string name="close">داخستن</string>
+    <string name="menu_login">چوونە ژوورەوە</string>
+    <string name="menu_send">ناردن</string>
+    <string name="menu_about">دەربارە</string>
+    <string name="menu_friends">هاوڕێکان</string>
+    <string name="menu_logout">چوونە دەرەوە</string>
+    <string name="menu_setting">ڕێکخستن</string>
+    <string name="menu_reset">نوێکردنەوە</string>
+    <string name="menu_language">زمان</string>
+</resources>
