@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,36 +25,36 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.ussms.Fragment.Friends;
 import com.example.ussms.Fragment.HomeFragment;
 import com.example.ussms.R;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class Main2Activity extends AppCompatActivity {
+
+    private AppBarConfiguration mAppBarConfiguration;
 
     private int mSelectedId;
     private final Handler mDrawerHandler = new Handler();
     private Toolbar toolbar;
+    private AlertDialog alertDialogLogin;
     DrawerLayout drawer;
-    private AppBarConfiguration mAppBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
-        setContentView(R.layout.activity_main);
-         toolbar = findViewById(R.id.toolbar);
+        setContentView(R.layout.activity_main2);
+         toolbar = findViewById(R.id.toolbar_n);
         setSupportActionBar(toolbar);
-        toolbar.setTitle(getResources().getString(R.string.app_name));
-         drawer = findViewById(R.id.drawer_layout);
-        final NavigationView navigationView = findViewById(R.id.nav_view);
+         drawer = findViewById(R.id.drawer_layout_n);
+        NavigationView navigationView = findViewById(R.id.nav_view_n);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_logout, R.id.nav_ch,R.id.nav_friend,R.id.nav_reset,R.id.nav_share,R.id.nav_send,R.id.nav_setting)
+                R.id.nav_home)
                 .setDrawerLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_n);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -79,12 +81,8 @@ public class MainActivity extends AppCompatActivity {
                 setTitle(R.string.menu_home);
                 navFragment = new HomeFragment() ;
                 break;
-            case R.id.nav_friend:
-                setTitle(R.string.menu_language);
-                navFragment = new Friends();
-                break;
-            case R.id.nav_setting:
-                Toast.makeText(getApplicationContext(),"sed",Toast.LENGTH_LONG).show();
+            case R.id.nav_login:
+                loginDig();
                 break;
             case R.id.nav_ch:
                 changeLanguage();
@@ -103,24 +101,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void loginDig() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.login_dialog, null);
+        builder.setView(dialogView);
+
+        EditText editText = (EditText) dialogView.findViewById(R.id.email);
+        alertDialogLogin = builder.create();
+        alertDialogLogin.show();
+
+
+    }
+
     private void changeLanguage() {
         final String[] listItems = {"English","کوردی"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this);
         builder.setTitle("Change Language");
         builder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                     if (which == 0){
-                         setLocale("en");
-                         recreate();
-                         finish();
-                         startActivity(getIntent());
-                     }else {
-                         setLocale("ku");
-                         recreate();
-                         finish();
-                         startActivity(getIntent());
-                     }
+                if (which == 0){
+                    setLocale("en");
+                    recreate();
+                    finish();
+                    startActivity(getIntent());
+                }else {
+                    setLocale("ku");
+                    recreate();
+                    finish();
+                    startActivity(getIntent());
+                }
             }
         });
 
@@ -145,27 +158,27 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.action_search));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
+        getMenuInflater().inflate(R.menu.main2, menu);
         return true;
     }
+
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_n);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    public void toSignUp(View view) {
+        alertDialogLogin.dismiss();
+        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.register_dialog, null);
+        builder.setView(dialogView);
+
+        EditText editText = (EditText) dialogView.findViewById(R.id.email);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 }

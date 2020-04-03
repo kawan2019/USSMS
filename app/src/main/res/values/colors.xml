@@ -6,5 +6,6 @@
     <color name="menu_background">#119c4b</color>
     <color name="background">#fefefe</color>
     <color name="text_home_color">#000000</color>
+    <color name="stroks">#454545</color>
 
 </resources>

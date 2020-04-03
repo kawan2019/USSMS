@@ -35,5 +35,7 @@ dependencies {
     implementation 'com.pixplicity.letterpress:library:1.0'
     implementation 'com.github.therealshabi:AutoImageFlipper:v1.4.1'
     //implementation 'com.github.therealshabi:AutoImageFlipper:1.6.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
+
 
 }
