@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "78691518530",
+    "firebase_url": "https://ussms-1c788.firebaseio.com",
+    "project_id": "ussms-1c788",
+    "storage_bucket": "ussms-1c788.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78691518530:android:de502f01bca6c3a2c105db",
+        "android_client_info": {
+          "package_name": "com.example.ussms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "78691518530-7pll2fq25bc0ncsdeuog6tgi5np1bk9b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTrzQ5YptW_DP8vY-6-WT5xMLmxWA8pX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "78691518530-7pll2fq25bc0ncsdeuog6tgi5np1bk9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

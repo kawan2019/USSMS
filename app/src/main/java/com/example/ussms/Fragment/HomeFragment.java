@@ -58,11 +58,7 @@ public class HomeFragment extends Fragment {
             view.setDescriptionBackgroundAlpha(0.5f);
             view.setDescriptionTextColor(Color.WHITE);
             view.setImageScaleType(ScaleType.CENTER_INSIDE);
-
             */
-
-
-
             fliper.addFlipperView(view);
             view.setOnFlipperClickListener(new FlipperView.OnFlipperClickListener() {
                 @Override

@@ -44,6 +44,34 @@
     <string name="menu_slideshow">Slideshow</string>
 
     <string name="home_second">Home Second</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="fullname">Full Name</string>
+    <string name="password">Password</string>
+    <string name="department">Department</string>
+    <string name="level">Level</string>
+    <string name="signup">Sign up</string>
+    <string name="gethelp">" Get help"</string>
+    <string name="Donthaveanaccount">"Don't have an account ? "</string>
+    <string name="forgetpassword">Forget Password?</string>
+    <string name="alreadyhaveanaccount">"Already have an account ? "</string>
+    <string name="her">her</string>
+    <string name="termsandconditions">Terms and Conditions</string>
+    <string name="teacher">Teacher</string>
+    <string name="student">Student</string>
+    <string name="title_activity_m3">M3Activity</string>
 
-
+    <string-array name="departments_array">
+        <item>Computer</item>
+        <item>Engineering</item>
+        <item>Law</item>
+        <item>Physic</item>
+        <item>English</item>
+        <item>Arabic</item>
+        <item>Geographic</item>
+        <item>Islamic</item>
+        <item>History</item>
+        <item>Social</item>
+    </string-array>
 </resources>

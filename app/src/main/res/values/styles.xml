@@ -1,12 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
+
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -18,6 +13,7 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="Theme.Samita.Toolbar" parent="ThemeOverlay.AppCompat.Light">
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:textColorPrimary">#292929</item>
         <item name="actionMenuTextColor">@android:color/black</item>
@@ -35,7 +31,16 @@
         <item name="pix_fontItalic">fonts/NunitoSans-SemiBold.ttf</item>
         <item name="pix_fontBoldItalic">fonts/QanelasSoft-ExtraBold.otf</item>
     </style>
+
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowBackground">@drawable/bg_dig</item>
     </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#000</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
 </resources>
