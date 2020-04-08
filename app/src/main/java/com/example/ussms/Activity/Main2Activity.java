@@ -74,7 +74,7 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.activity_main2);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this) ;
         
         toolbar = findViewById(R.id.toolbar_n);
         setSupportActionBar(toolbar);
