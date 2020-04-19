@@ -6,21 +6,27 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.ussms.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import technolifestyle.com.imageslider.FlipperLayout;
 import technolifestyle.com.imageslider.FlipperView;
 
-public class HomeFragmentN extends Fragment {
+public class HomeFragmentN extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
+    private ImageButton igb1;
+    private FirebaseAuth mAuth;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home_n, container, false);
         fliper = root.findViewById(R.id.fliper);
+        mAuth = FirebaseAuth.getInstance();
+        root.findViewById(R.id.igb1).setOnClickListener(this);
 
 
         setLayout();
@@ -65,5 +71,14 @@ public class HomeFragmentN extends Fragment {
             });
         }
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.igb1:
+            break;
+
+        }
     }
 }

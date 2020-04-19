@@ -61,6 +61,10 @@
     <string name="teacher">Teacher</string>
     <string name="student">Student</string>
     <string name="title_activity_m3">M3Activity</string>
+    <string name="all_set">Register successfuly please visit your email for confirm account.</string>
+    <string name="okay">Okay</string>
+    <string name="not_acctive">You need to confirm your account please visit your email for confirm account</string>
+    <string name="ResendEmail">Resend Email</string>
 
     <string-array name="departments_array">
         <item>Computer</item>

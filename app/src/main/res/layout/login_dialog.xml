@@ -20,7 +20,6 @@
                 android:padding="12dp"
                 android:src="@drawable/ic_close_black_24dp"
                 android:background="#00000000"
-                android:onClick="closeDL"
                 />
             <TextView
                 android:layout_width="match_parent"

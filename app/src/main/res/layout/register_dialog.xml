@@ -2,9 +2,10 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_dig"
+    android:layout_margin="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="20dp"
-    android:background="@drawable/bg_dig">
+   >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,8 +20,7 @@
                 android:layout_height="wrap_content"
                 android:padding="12dp"
                 android:src="@drawable/ic_close_black_24dp"
-                android:background="#00000000"
-                android:onClick="closeDR"/>
+                android:background="#00000000"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,6 +43,7 @@
             android:paddingRight="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="5dp"
+            app:endIconDrawable="@drawable/application_setting_ic"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edUsername_register"

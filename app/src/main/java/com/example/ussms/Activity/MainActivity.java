@@ -2,6 +2,7 @@ package com.example.ussms.Activity;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.example.ussms.Fragment.Friends;
 import com.example.ussms.Fragment.HomeFragment;
 import com.example.ussms.R;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Locale;
 
@@ -37,12 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     DrawerLayout drawer;
     private AppBarConfiguration mAppBarConfiguration;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
          toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
@@ -88,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_ch:
                 changeLanguage();
+                break;
+            case R.id.nav_logout:
+                if (mAuth.getCurrentUser() != null){
+                    mAuth.signOut();
+                }else {
+                    startActivity(new Intent(this,Splash.class));
+                }
                 break;
             default:
                 Toast.makeText(getApplicationContext(),"ops",Toast.LENGTH_LONG).show();

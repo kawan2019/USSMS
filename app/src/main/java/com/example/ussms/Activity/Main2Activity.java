@@ -1,24 +1,18 @@
 package com.example.ussms.Activity;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,7 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -37,45 +30,78 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.ussms.Dialogs.Signup;
 import com.example.ussms.Fragment.HomeFragmentN;
 import com.example.ussms.R;
 import com.example.ussms.Utils.AnimationUtil;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ServerTimestamp;
 import com.tiper.MaterialSpinner;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 public class Main2Activity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfigurationn;
     private int mSelectedId;
     private final Handler mDrawerHandler = new Handler();
     private Toolbar toolbar;
-    private AlertDialog alertDialogLogin, alertDialogRegister;
+    private AlertDialog alertDialogLogin, alertDialogRegister, alertDialogAllSet,alertDialogResendEmail;
     private DrawerLayout drawer;
     private boolean validateDepSp = true;
     private boolean validateLevSp = true;
+    @ServerTimestamp Date time;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private EditText edEmailLogin, edPasswordLogin, edUsernameRegister, edFullNameRegister, edEmailRegister, edPasswordRegister;
-    private String email, emailL, paswwordL, password, fullname, username,department,who;
+    TextInputLayout hoUsernameRegister,hoEmailRegister;
+    private String email, emailL, paswwordL, password, fullname, username,department;
+    private String who = "STN_1";
+
     private int level_;
-    private Button btnLoginLogin, btnRegisterRegister;
+    private Button btnLoginLogin, btnRegisterRegister,btnStudentRegister,btnTeacherRegester,btnOkayAllSet,btnResendEmail;
     private MaterialButtonToggleGroup toggleButton;
     MaterialSpinner spLevelRegister, spDepartmentRegister;
     private ImageButton btnCloseRegister, btnCloseLogin;
+     Map<String,Object> user_,logs;
     private AVLoadingIndicatorView avi, avir;
     Integer [] Level = {1, 2, 3, 4};
-
+    final static String USERNAME = "USERNAME";
+    final static String DEPARTMENT = "DEPARTMENT";
+    final static String FULLNAME = "FULLNAME";
+    final static String EMAIL= "EMAIL";
+    final static String LEVEL= "LEVEL";
+    final static String IMEI = "IMEI";
+    final static String DID = "DID";
+    final static String UID = "UID";
+    final static String DATE_CREATION = "DATE_CREATION";
+    final static String STATUS = "STATUS";
+    final static String TYPE = "TYPE";
+    private static final String TAG = "EmailPassword";
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
+    private CollectionReference cr = fsdb.collection("Users");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.activity_main2);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this) ;
-        
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() != null){mAuth.signOut();}
         toolbar = findViewById(R.id.toolbar_n);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout_n);
@@ -127,24 +153,62 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
     private void loginDig() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.login_dialog, null);
         builder.setView(dialogView);
-        edEmailLogin = (EditText) dialogView.findViewById(R.id.edEmail_login);
-        edPasswordLogin = (EditText) dialogView.findViewById(R.id.edPassword_login);
-        btnLoginLogin = (Button) dialogView.findViewById(R.id.btnLogin_login);
-        avi = (AVLoadingIndicatorView) dialogView.findViewById(R.id.avi);
+        edEmailLogin = dialogView.findViewById(R.id.edEmail_login);
+        edPasswordLogin = dialogView.findViewById(R.id.edPassword_login);
+        btnLoginLogin = dialogView.findViewById(R.id.btnLogin_login);
+        avi = dialogView.findViewById(R.id.avi);
         avi.setIndicator("BallSpinFadeLoaderIndicator");
+
         btnLoginLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                email = edEmailLogin.getText().toString().trim()+"@uoh.edu.iq";
+                password = edPasswordLogin.getText().toString().trim();
+
                 btnLoginLogin.setVisibility(View.INVISIBLE);
                 avi.show();
+                if (TextUtils.isEmpty(email)) {
+                    AnimationUtil.shakeView(edEmailLogin, Main2Activity.this);
+                    avi.hide();
+                    btnLoginLogin.setVisibility(View.VISIBLE);
+                }else if (TextUtils.isEmpty(password)){
+                    AnimationUtil.shakeView(edEmailLogin, Main2Activity.this);
+                    avi.hide();
+                    btnLoginLogin.setVisibility(View.VISIBLE);
+                }else {
+                    mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()){
+                                if (mAuth.getCurrentUser().isEmailVerified()){
+                                    Toast.makeText(getApplicationContext(),"Login Successfully",Toast.LENGTH_LONG).show();
+                                    avi.hide();
+                                    startActivity(new Intent(Main2Activity.this,Splash.class));
+                                }else {
+                                    alertDialogLogin.dismiss();
+                                    View parentLayout = findViewById(android.R.id.content);
+                                    Snackbar.make(parentLayout, "You need to confirm your account", Snackbar.LENGTH_LONG)
+                                            .setAction("Resend Email", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    sendEmailVerification();
+                                                }
+                                            })
+                                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                                            .show();
+                                }
+                            }else {
+                                Toast.makeText(getApplicationContext(),task.getException().getMessage()+"",Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
             }
         });
-
         alertDialogLogin = builder.create();
         alertDialogLogin.show();
     }
@@ -191,146 +255,264 @@ public class Main2Activity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main2, menu);
         return true;
     }
-
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_n);
         return NavigationUI.navigateUp(navController, mAppBarConfigurationn)
                 || super.onSupportNavigateUp();
     }
-
-    public void toSignUp(View view) {
+    public void toSignUp(final View view) {
         alertDialogLogin.dismiss();
+        Signup cdd=new Signup(Main2Activity.this);
+        cdd.show();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
+//        LayoutInflater inflater = this.getLayoutInflater();
+//        View dialogView = inflater.inflate(R.layout.register_dialog, null);
+//        builder.setView(dialogView);
+//
+//        edUsernameRegister = dialogView.findViewById(R.id.edUsername_register);
+//        edFullNameRegister = dialogView.findViewById(R.id.edFullname_register);
+//        edEmailRegister = dialogView.findViewById(R.id.edEmail_register);
+//        edPasswordRegister = dialogView.findViewById(R.id.edPassword_register);
+//        btnRegisterRegister = dialogView.findViewById(R.id.btnRegister_register);
+//        avir = dialogView.findViewById(R.id.avi_register);
+//        spDepartmentRegister = dialogView.findViewById(R.id.spDepartment_register);
+//        spLevelRegister = dialogView.findViewById(R.id.spLevel_register);
+//        toggleButton = dialogView.findViewById(R.id.tgWho_register);
+//        hoUsernameRegister = dialogView.findViewById(R.id.hoUsername_register);
+//        hoEmailRegister = dialogView.findViewById(R.id.hoEmail_register);
+//        dialogView.findViewById(R.id.STN_1).setOnClickListener(this);
+//        dialogView.findViewById(R.id.TCHN_1).setOnClickListener(this);
+//
+//        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//
+//        ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, Level);
+//        adp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spLevelRegister.setAdapter(adp2);
+//        ArrayAdapter<CharSequence> adp3 = ArrayAdapter.createFromResource(this, R.array.departments_array
+//                , android.R.layout.simple_list_item_1);
+//        adp3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spDepartmentRegister.setAdapter(adp3);
+//
+//        spDepartmentRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
+//                validateDepSp = false;
+//                department = materialSpinner.getSelectedItem().toString();
+//            }
+//            @Override
+//            public void onNothingSelected(MaterialSpinner materialSpinner) {
+//                validateDepSp = true;
+//            }
+//        });
+//        spLevelRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
+//                validateLevSp = false;
+//                level_ = i+1;
+//                Toast.makeText(getApplicationContext(),level_+"",Toast.LENGTH_LONG).show();
+//            }
+//            @Override
+//            public void onNothingSelected(MaterialSpinner materialSpinner) {
+//                validateLevSp = true;
+//            }
+//        });
+//        avir.setIndicator("BallSpinFadeLoaderIndicator");
+//        btnRegisterRegister.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                avir.show();
+//                final boolean[] vu = {false};
+//                btnRegisterRegister.setVisibility(View.INVISIBLE);
+//                username = edUsernameRegister.getText().toString();
+//                fullname = edFullNameRegister.getText().toString();
+//                email = edEmailRegister.getText().toString().trim()+"@uoh.edu.iq";
+//                password = edPasswordRegister.getText().toString();
+//                String date = FieldValue.serverTimestamp().toString();
+//                fsdb.collection("Users")
+//                        .get()
+//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                if (task.isSuccessful()) {
+//                                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                                        if (document.getId().equalsIgnoreCase(username)){
+//                                            hoUsernameRegister.setError("Already Token");
+//                                            vu[0] = false;
+//                                            break;
+//                                        }else {
+//                                            hoUsernameRegister.setError(null);
+//                                            vu[0] = true;
+//                                        }
+//                                        Log.d(TAG, document.getId()+"");
+//                                    }
+//                                } else {
+//                                    Log.d(TAG, "Error getting documents: ", task.getException());
+//                                }
+//                            }
+//                        });
+//                if ((TextUtils.isEmpty(username)) || (!username.matches("[a-zA-Z._]*")) || (username.length() < 5) || (vu[0])) {
+//                    AnimationUtil.shakeView(edUsernameRegister, Main2Activity.this);
+//                    avir.hide();
+//                    btnRegisterRegister.setVisibility(View.VISIBLE);
+//                } else if ((fullname.length() < 9) || (!fullname.matches("[a-zA-Z ]*"))) {
+//                    AnimationUtil.shakeView(edFullNameRegister, Main2Activity.this);
+//                    avir.hide();
+//                    btnRegisterRegister.setVisibility(View.VISIBLE);
+//                } else if (TextUtils.isEmpty(email)) {
+//                    AnimationUtil.shakeView(edEmailRegister, Main2Activity.this);
+//                    avir.hide();
+//                    btnRegisterRegister.setVisibility(View.VISIBLE);
+//                } else if ((TextUtils.isEmpty(password)) || (password.length() < 8)) {
+//                    AnimationUtil.shakeView(edPasswordRegister, Main2Activity.this);
+//                    avir.hide();
+//                    btnRegisterRegister.setVisibility(View.VISIBLE);
+//                }else if(validateDepSp){
+//                    AnimationUtil.shakeView(spDepartmentRegister, Main2Activity.this);
+//                    avir.hide();
+//                    btnRegisterRegister.setVisibility(View.VISIBLE);
+//                }else if(validateLevSp){
+//                    AnimationUtil.shakeView(spLevelRegister, Main2Activity.this);
+//                    avir.hide();
+//                    btnRegisterRegister.setVisibility(View.VISIBLE);
+//                }else {
+//                    user_ = new HashMap<>();
+//                    logs = new HashMap<>();
+//
+//                    user_.put(USERNAME,username);
+//                    user_.put(EMAIL,email);
+//                    user_.put(FULLNAME,fullname);
+//                    user_.put(DEPARTMENT,department);
+//                    user_.put(LEVEL,level_);
+//                    logs.put(DID,getDeviceUniqueID(Main2Activity.this));
+//                    logs.put(DATE_CREATION,date);
+//                    logs.put(IMEI,getDeviceIMEI());
+//                    user_.put(TYPE,who);
+//                    user_.put(STATUS,false);
+//                    Log.d(TAG, "createAccount:" + email);
+//                    showProgressBar();
+//                    sendInfoToDB(user_,logs);
+//
+//                    fsdb.collection("Users").document(username).set(user_).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()){
+//                                fsdb.collection("Users").document(username).collection("Logs").document("Creation_Log").set(logs).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//                                        if (task.isSuccessful()){
+//                                            Log.d(TAG, "lodUserInformation:success");
+//                                            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                                                @Override
+//                                                public void onComplete(@NonNull Task<AuthResult> task) {
+//                                                    if (task.isSuccessful()){
+//                                                        Log.d(TAG, "createUserWithEmail:success");
+//                                                        user_.put(UID,mAuth.getUid());
+//                                                        fsdb.collection("users").document(username).update(user_);
+//                                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                                                                .setDisplayName(username)
+//                                                                .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+//                                                                .build();
+//                                                        mAuth.getCurrentUser().updateProfile(profileUpdates);
+//                                                        alertDialogRegister.dismiss();
+//                                                        sendEmailVerification();
+//                                                        dialogAllSet();
+//
+//                                                    }else {
+//                                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+//                                                        if (task.getException().getMessage().equalsIgnoreCase("The email address is already in use by another account.")){
+//                                                            hoEmailRegister.setError(task.getException().getMessage()+"");
+//                                                        }else {
+//                                                            hoEmailRegister.setError(null);
+//                                                        }
+//                                                        Toast.makeText(Main2Activity.this, task.getException().getMessage()+"",Toast.LENGTH_SHORT).show();
+//                                                        hideProgressBar();
+//                                                        btnRegisterRegister.setVisibility(View.VISIBLE);
+//                                                    }
+//                                                }
+//                                            });
+//                                        }else {
+//                                            Log.w(TAG, "lodLogsInformation:failure", task.getException());
+//                                            Toast.makeText(Main2Activity.this,task.getException().getMessage()+"", Toast.LENGTH_SHORT).show();
+//                                            hideProgressBar();
+//                                            btnRegisterRegister.setVisibility(View.VISIBLE);
+//
+//                                        }
+//
+//                                    }
+//                                });
+//                            }else{
+//                                Log.w(TAG, "lodUserInformation:failure", task.getException());
+//                                Toast.makeText(Main2Activity.this,task.getException().getMessage()+"", Toast.LENGTH_SHORT).show();
+//                                hideProgressBar();
+//                                btnRegisterRegister.setVisibility(View.VISIBLE);
+//                            }
+//                        }
+//                    });
+//
+//
+//
+//
+//
+//                }
+//            }
+//        });
+//        alertDialogRegister = builder.create();
+//        alertDialogRegister.show();
+    }
+
+    private void dialogResendEmail(){
         AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.register_dialog, null);
+        View dialogView = inflater.inflate(R.layout.resendemail_dialog, null);
         builder.setView(dialogView);
-
-        edUsernameRegister = (EditText) dialogView.findViewById(R.id.edUsername_register);
-        edFullNameRegister = (EditText) dialogView.findViewById(R.id.edFullname_register);
-        edEmailRegister = (EditText) dialogView.findViewById(R.id.edEmail_register);
-        edPasswordRegister = (EditText) dialogView.findViewById(R.id.edPassword_register);
-        btnRegisterRegister = (Button) dialogView.findViewById(R.id.btnRegister_register);
-        avir = (AVLoadingIndicatorView) dialogView.findViewById(R.id.avi_register);
-        spDepartmentRegister = (MaterialSpinner) dialogView.findViewById(R.id.spDepartment_register);
-        spLevelRegister = (MaterialSpinner) dialogView.findViewById(R.id.spLevel_register);
-        toggleButton = (MaterialButtonToggleGroup) dialogView.findViewById(R.id.tgWho_register);
-        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-        ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, Level);
-        adp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spLevelRegister.setAdapter(adp2);
-        ArrayAdapter<CharSequence> adp3 = ArrayAdapter.createFromResource(this, R.array.departments_array
-                , android.R.layout.simple_list_item_1);
-        adp3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spDepartmentRegister.setAdapter(adp3);
-
-        toggleButton.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
-            @Override
-            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-                if (checkedId == R.id.STN_1){
-                    who = "STN_1";
-                }else {
-                    who = "TCHN_1";
-                }
-            }
-        });
-
-        spDepartmentRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
-                validateDepSp = false;
-                department = materialSpinner.getSelectedItem().toString();
-            }
-            @Override
-            public void onNothingSelected(MaterialSpinner materialSpinner) {
-                validateDepSp = true;
-            }
-        });
-        spLevelRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
-                validateLevSp = false;
-                level_ = i+1;
-                Toast.makeText(getApplicationContext(),level_+"",Toast.LENGTH_LONG).show();
-            }
-            @Override
-            public void onNothingSelected(MaterialSpinner materialSpinner) {
-                validateLevSp = true;
-            }
-        });
-
-        avir.setIndicator("BallSpinFadeLoaderIndicator");
-        WifiInfo info = manager.getConnectionInfo();
-        String address = info.getMacAddress();
-        Toast.makeText(getApplicationContext(), getDeviceIMEI()+"  "+getDeviceUniqueID(this), Toast.LENGTH_LONG).show();
-        btnRegisterRegister.setOnClickListener(new View.OnClickListener() {
+        btnResendEmail = dialogView.findViewById(R.id.btnResend_resendEmail);
+        btnResendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                avir.show();
-                btnRegisterRegister.setVisibility(View.INVISIBLE);
-                username = edUsernameRegister.getText().toString();
-                fullname = edFullNameRegister.getText().toString();
-                email = edEmailRegister.getText().toString();
-                password = edPasswordRegister.getText().toString();
-                if ((TextUtils.isEmpty(username)) || (!username.matches("[a-zA-Z._]*")) || (username.length() < 5)) {
-                    AnimationUtil.shakeView(edUsernameRegister, Main2Activity.this);
-                    avir.hide();
-                    btnRegisterRegister.setVisibility(View.VISIBLE);
-                } else if ((fullname.length() < 9) || (!fullname.matches("[a-zA-Z ]*"))) {
-                    AnimationUtil.shakeView(edFullNameRegister, Main2Activity.this);
-                    avir.hide();
-                    btnRegisterRegister.setVisibility(View.VISIBLE);
-                } else if (TextUtils.isEmpty(email)) {
-                    AnimationUtil.shakeView(edEmailRegister, Main2Activity.this);
-                    avir.hide();
-                    btnRegisterRegister.setVisibility(View.VISIBLE);
-                } else if ((TextUtils.isEmpty(password)) || (password.length() < 8)) {
-                    AnimationUtil.shakeView(edPasswordRegister, Main2Activity.this);
-                    avir.hide();
-                    btnRegisterRegister.setVisibility(View.VISIBLE);
-                }else if(validateDepSp){
-                    AnimationUtil.shakeView(spDepartmentRegister, Main2Activity.this);
-                    avir.hide();
-                    btnRegisterRegister.setVisibility(View.VISIBLE);
-                }else if(validateLevSp){
-                    AnimationUtil.shakeView(spLevelRegister, Main2Activity.this);
-                    avir.hide();
-                    btnRegisterRegister.setVisibility(View.VISIBLE);
-                }else {
-
-
-                }
+                sendEmailVerification();
+                alertDialogResendEmail.dismiss();
+                alertDialogLogin.show();
             }
         });
-        alertDialogRegister = builder.create();
-        alertDialogRegister.show();
+
+
+        alertDialogResendEmail = builder.create();
+        alertDialogResendEmail.show();
+
+
     }
-    public String getDeviceUniqueID(Activity activity){
-        String device_unique_id = Settings.Secure.getString(activity.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-        return device_unique_id;
-    }
-    public String getDeviceIMEI() {
-        String deviceUniqueIdentifier = null;
-        TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-        if (null != tm) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getApplicationContext(),"Please Allow ",Toast.LENGTH_LONG).show();
-                return null;
-            }
-            deviceUniqueIdentifier = tm.getDeviceId();
-        }
-        if (null == deviceUniqueIdentifier || 0 == deviceUniqueIdentifier.length()) {
-            deviceUniqueIdentifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        }
-        return deviceUniqueIdentifier;
+    private void sendEmailVerification() {
+        final FirebaseUser user = mAuth.getCurrentUser();
+        user.sendEmailVerification()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(Main2Activity.this,
+                                    "Verification email sent to " + user.getEmail(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "sendEmailVerification", task.getException());
+                            Toast.makeText(Main2Activity.this,
+                                    "Failed to send verification email.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
     public void toLogin(View view) {
         alertDialogRegister.dismiss();
         alertDialogLogin.show();
     }
     public void her(View view) {   }
-    public void closeDL(View view) {alertDialogLogin.dismiss();}
-    public void closeDR(View view) {alertDialogRegister.dismiss();}
+    private void hideProgressBar() { if (avir!=null){
+        avi.hide();
+        btnLoginLogin.setVisibility(View.VISIBLE);
+    }}
+    private void showProgressBar() {if (avir!=null){
+        avir.show();
+        btnLoginLogin.setVisibility(View.INVISIBLE);
+    }}
+
 }
