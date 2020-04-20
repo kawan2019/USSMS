@@ -80,22 +80,35 @@ public class MainActivity extends AppCompatActivity {
         Fragment navFragment = null;
         switch (itemId) {
             case R.id.nav_home:
+                if (mAuth.getCurrentUser() == null){
+                    startActivity(new Intent(this,Splash.class));
+                }
                 setTitle(R.string.menu_home);
                 navFragment = new HomeFragment() ;
                 break;
             case R.id.nav_friend:
+                if (mAuth.getCurrentUser() == null){
+                    startActivity(new Intent(this,Splash.class));
+                }
                 setTitle(R.string.menu_language);
                 navFragment = new Friends();
                 break;
             case R.id.nav_setting:
+                if (mAuth.getCurrentUser() == null){
+                    startActivity(new Intent(this,Splash.class));
+                }
                 Toast.makeText(getApplicationContext(),"sed",Toast.LENGTH_LONG).show();
                 break;
             case R.id.nav_ch:
+                if (mAuth.getCurrentUser() == null){
+                    startActivity(new Intent(this,Splash.class));
+                }
                 changeLanguage();
                 break;
             case R.id.nav_logout:
                 if (mAuth.getCurrentUser() != null){
                     mAuth.signOut();
+                    startActivity(new Intent(this,Splash.class));
                 }else {
                     startActivity(new Intent(this,Splash.class));
                 }

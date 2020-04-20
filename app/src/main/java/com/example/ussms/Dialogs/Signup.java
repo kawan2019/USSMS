@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -30,10 +31,13 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.tiper.MaterialSpinner;
@@ -53,6 +57,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     private boolean validateDepSp = true;
     private boolean validateLevSp = true;
      private String username;
+     private String token;
      private String email, password, fullname;
     private String who = "STN_1",department;
     int level_;
@@ -72,11 +77,13 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     final static String FULLNAME = "FULLNAME";
     final static String EMAIL = "EMAIL";
     final static String LEVEL = "LEVEL";
+    final static String IMAGE = "IMAGE";
     final static String IMEI = "IMEI";
     final static String DID = "DID";
     final static String UID = "UID";
     final static String DATE_CREATION = "DATE_CREATION";
     final static String STATUS = "STATUS";
+    final static String TOKEN = "TOKEN";
     final static String TYPE = "TYPE";
     private static final String TAG = "EmailPassword";
     private FirebaseAuth mAuth;
@@ -93,7 +100,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register_dialog);
+        setContentView(R.layout.d_register);
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) { mAuth.signOut(); }
         edUsernameRegister = findViewById(R.id.edUsername_register);
@@ -154,7 +161,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     private void validateFilds() {
         username = edUsernameRegister.getText().toString();
         fullname = edFullNameRegister.getText().toString();
-        email = edEmailRegister.getText().toString().trim() + "@uoh.edu.iq";
+        email = edEmailRegister.getText().toString().trim() + "@gmail.com";
         password = edPasswordRegister.getText().toString();
         //String date = FieldValue.serverTimestamp().toString();
         if (!TextUtils.isEmpty(username)){
@@ -230,15 +237,21 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
                                                 public void onSuccess(Void aVoid) {
                                                     final String userUid = task.getResult().getUser().getUid();
                                                     if (task.isSuccessful()) {
+
+
+
+
                                                         // TODO https://firebase.google.com/docs/cloud-messaging/android/client#retrieve-the-current-registration-token.
                                                         Map<String, Object> userMap = new HashMap<>();
                                                         userMap.put(UID, userUid);
+                                                        userMap.put(USERNAME, username);
                                                         userMap.put(FULLNAME, fullname);
-                                                        userMap.put("image", "uri.toString()");
+                                                        userMap.put(IMAGE, "https://firebasestorage.googleapis.com/v0/b/ussms-1c788.appspot.com/o/Defaults%2FPngItem_2145309.png?alt=media&token=e47460f0-12aa-4f95-819a-5ee70d602ebd");
                                                         userMap.put(EMAIL, email);
                                                         userMap.put(DEPARTMENT, department);
                                                         userMap.put(LEVEL, level_);
                                                         userMap.put(TYPE, who);
+                                                        userMap.put(TOKEN, token);
                                                         userMap.put(STATUS, false);
 
                                                         fsdb.collection("Users").document(username).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -251,6 +264,29 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
                                                                         Toasty.success(getContext(), "Verification email sent", Toasty.LENGTH_SHORT, true).show();
                                                                     }
                                                                 });
+
+                                                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                                .setDisplayName(username)
+                                                                .setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/ussms-1c788.appspot.com/o/Defaults%2FPngItem_2145309.png?alt=media&token=e47460f0-12aa-4f95-819a-5ee70d602ebd"))
+                                                                .build();
+                                                                mAuth.getCurrentUser().updateProfile(profileUpdates);
+
+                                                                FirebaseInstanceId.getInstance().getInstanceId()
+                                                                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                                                if (!task.isSuccessful()) {
+                                                                                    Log.w(TAG, "getInstanceId failed", task.getException());
+                                                                                    return;
+                                                                                }
+                                                                                String token = task.getResult().getToken();
+                                                                                Map<String, Object> userMap = new HashMap<>();
+                                                                                Log.d(TAG,token);
+                                                                                userMap.put(TOKEN, token);
+                                                                                fsdb.collection("Users").document(username).update(userMap);
+                                                                            }
+                                                                        });
+
                                                                 final Map<String, Object> logs = new HashMap();
                                                                 logs.put(DATE_CREATION, getDate());
                                                                 logs.put(DID, getDeviceUniqueID());
@@ -340,7 +376,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     private void dialogAllSet(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.allset_dialog, null);
+        View dialogView = inflater.inflate(R.layout.d_allset, null);
         builder.setView(dialogView);
         btnOkayAllSet = dialogView.findViewById(R.id.btnOkay_allset);
         btnOkayAllSet.setOnClickListener(new View.OnClickListener() {

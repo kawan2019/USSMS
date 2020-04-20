@@ -65,6 +65,7 @@
     <string name="okay">Okay</string>
     <string name="not_acctive">You need to confirm your account please visit your email for confirm account</string>
     <string name="ResendEmail">Resend Email</string>
+    <string name="todo">TODO</string>
 
     <string-array name="departments_array">
         <item>Computer</item>

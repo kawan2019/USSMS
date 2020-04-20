@@ -35,6 +35,8 @@ import com.example.ussms.Fragment.HomeFragmentN;
 import com.example.ussms.R;
 import com.example.ussms.Utils.AnimationUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.navigation.NavigationView;
@@ -47,12 +49,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.tiper.MaterialSpinner;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 public class Main2Activity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfigurationn;
@@ -79,17 +86,8 @@ public class Main2Activity extends AppCompatActivity {
      Map<String,Object> user_,logs;
     private AVLoadingIndicatorView avi, avir;
     Integer [] Level = {1, 2, 3, 4};
-    final static String USERNAME = "USERNAME";
-    final static String DEPARTMENT = "DEPARTMENT";
-    final static String FULLNAME = "FULLNAME";
-    final static String EMAIL= "EMAIL";
-    final static String LEVEL= "LEVEL";
-    final static String IMEI = "IMEI";
-    final static String DID = "DID";
-    final static String UID = "UID";
-    final static String DATE_CREATION = "DATE_CREATION";
-    final static String STATUS = "STATUS";
-    final static String TYPE = "TYPE";
+    String token;
+    String TOKEN = "TOKEN";
     private static final String TAG = "EmailPassword";
     private FirebaseAuth mAuth;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
@@ -155,7 +153,7 @@ public class Main2Activity extends AppCompatActivity {
     private void loginDig() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.login_dialog, null);
+        View dialogView = inflater.inflate(R.layout.d_login, null);
         builder.setView(dialogView);
         edEmailLogin = dialogView.findViewById(R.id.edEmail_login);
         edPasswordLogin = dialogView.findViewById(R.id.edPassword_login);
@@ -166,7 +164,7 @@ public class Main2Activity extends AppCompatActivity {
         btnLoginLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                email = edEmailLogin.getText().toString().trim()+"@uoh.edu.iq";
+                email = edEmailLogin.getText().toString().trim()+"@gmail.com";
                 password = edPasswordLogin.getText().toString().trim();
 
                 btnLoginLogin.setVisibility(View.INVISIBLE);
@@ -185,9 +183,35 @@ public class Main2Activity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()){
                                 if (mAuth.getCurrentUser().isEmailVerified()){
-                                    Toast.makeText(getApplicationContext(),"Login Successfully",Toast.LENGTH_LONG).show();
-                                    avi.hide();
-                                    startActivity(new Intent(Main2Activity.this,Splash.class));
+                                    Toasty.success(getApplicationContext(),"Login Successfully",Toasty.LENGTH_LONG).show();
+                                    FirebaseInstanceId.getInstance().getInstanceId()
+                                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                    if (!task.isSuccessful()) {
+                                                        Log.w(TAG, "getInstanceId failed", task.getException());
+                                                        return;
+                                                    }
+                                                    token = task.getResult().getToken();
+                                                    Map<String, Object> userMap = new HashMap<>();
+                                                    userMap.put(TOKEN, token);
+                                                    Log.d(TAG,token);
+                                                    fsdb.collection("Users").document(username).update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG,"Success");
+                                                            avi.hide();
+                                                            startActivity(new Intent(Main2Activity.this,Splash.class));
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.d(TAG,"ERROR"+e.getMessage());
+                                                        }
+                                                    });
+                                                }
+                                            });
+
                                 }else {
                                     alertDialogLogin.dismiss();
                                     View parentLayout = findViewById(android.R.id.content);
