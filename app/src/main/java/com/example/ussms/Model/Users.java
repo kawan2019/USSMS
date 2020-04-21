@@ -6,10 +6,6 @@ public class Users {
     private String FULLNAME;
     private String IMAGE;
 
-
-
-
-
     private Users(){
     }
     private Users(String USERNAME,String UID,String FULLNAME,String IMAGE){

@@ -13,9 +13,11 @@
         android:orientation="horizontal">
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/cig_rc_friends"
+        android:layout_weight="1"
         android:layout_width="50dp"
         android:layout_height="50dp"/>
     <LinearLayout
+        android:layout_weight="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="15dp"
@@ -49,9 +51,11 @@
         app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
         <CheckBox
+            android:id="@+id/ch_rc_friends"
+            android:layout_weight="1"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            style="material"
+            android:buttonTint="#000"
             />
 
     </LinearLayout>

@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,12 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.ussms.Abstracts.ItemClickListener;
 import com.example.ussms.Model.Users;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -26,6 +32,9 @@ public class Friends extends Fragment {
     private RecyclerView recyclerView;
     private FirebaseFirestore mFirestore;
     FirestoreRecyclerAdapter adapter;
+    ArrayList<String> checked = new ArrayList<String>();
+    FloatingActionButton fab;
+    StringBuffer stringBuffer;
     public Friends() {
     }
 
@@ -37,6 +46,22 @@ public class Friends extends Fragment {
 
         recyclerView = view.findViewById(R.id.RC_friends);
         mFirestore = FirebaseFirestore.getInstance();
+        fab = view.findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stringBuffer =new StringBuffer();
+                for (String s : checked){
+                    stringBuffer.append(s);
+                    stringBuffer.append("\n");
+
+                }
+                if (checked.size() >0){
+                    Toast.makeText(getContext(),stringBuffer.toString(),Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
 
         Query query = mFirestore.collection("Users");
 
@@ -54,13 +79,25 @@ public class Friends extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int i, @NonNull Users users) {
+            protected void onBindViewHolder(@NonNull final UsersViewHolder holder,  int i, @NonNull  Users users) {
 
                 holder.tv_username.setText(users.getUSERNAME());
                 holder.tv_fullname.setText(users.getFULLNAME());
                 holder.tv_uid.setText(users.getUID());
                 CircleImageView user_image_view = holder.circleImageView;
                 Glide.with(getContext()).load(users.getIMAGE()).into(user_image_view);
+                final String a = users.getUSERNAME();
+                holder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, int pos) {
+                        CheckBox ch = (CheckBox) v;
+                        if (ch.isChecked()){
+                            checked.add(a);
+                        }else if(!ch.isChecked()){
+                            checked.remove(a);
+                        }
+                    }
+                });
 
             }
         };
@@ -83,9 +120,12 @@ public class Friends extends Fragment {
         adapter.stopListening();
     }
 
-    private class UsersViewHolder extends RecyclerView.ViewHolder{
+    private class UsersViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView tv_username,tv_fullname,tv_uid;
         private CircleImageView circleImageView;
+        private CheckBox checkBox;
+        ItemClickListener itemClickListener;
+
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -93,7 +133,18 @@ public class Friends extends Fragment {
             tv_username = itemView.findViewById(R.id.tv_username_rc_friends);
             tv_uid = itemView.findViewById(R.id.tv_uid_rc_friends);
             circleImageView = itemView.findViewById(R.id.cig_rc_friends);
+            checkBox = itemView.findViewById(R.id.ch_rc_friends);
 
+            checkBox.setOnClickListener(this);
+
+        }
+        public void setItemClickListener(ItemClickListener ic){
+            this.itemClickListener = ic;
+        }
+
+        @Override
+        public void onClick(View v) {
+            this.itemClickListener.onItemClick(v,getLayoutPosition());
         }
     }
 }
