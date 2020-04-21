@@ -10,13 +10,17 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.R;
 
+import es.dmoral.toasty.Toasty;
 import technolifestyle.com.imageslider.FlipperLayout;
 import technolifestyle.com.imageslider.FlipperView;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
+    Fragment friends = new Friends();
+    Fragment classroom = new ClassR();
 
 
 
@@ -24,10 +28,26 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.f_home, container, false);
 
         fliper = root.findViewById(R.id.fliper);
-
+        root.findViewById(R.id.igb120).setOnClickListener(this);
+        root.findViewById(R.id.igb2).setOnClickListener(this);
 
         setLayout();
         return root;
+    }
+    @Override
+    public void onClick(View view) {
+        MainActivity m = (MainActivity) getActivity();
+        switch (view.getId()) {
+            case R.id.igb120:
+                m.g(classroom);
+                break;
+            case R.id.igb2:
+                m.g(friends);
+                break;
+            default:
+
+        }
+
     }
 
 

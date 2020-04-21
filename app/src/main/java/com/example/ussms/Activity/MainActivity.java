@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.example.ussms.R;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private final Handler mDrawerHandler = new Handler();
     private Toolbar toolbar;
     DrawerLayout drawer;
+    private ImageButton igb_classroom;
     private AppBarConfiguration mAppBarConfiguration;
     FirebaseAuth mAuth;
 
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (IllegalStateException ignored) {
             }
         }
+
     }
 
     private void changeLanguage() {
@@ -149,6 +153,16 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("Lang",lang);
         editor.apply();
     }
+    public void g(Fragment navFragment){
+        if (navFragment != null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+            try {
+                transaction.replace(R.id.nav_host_fragment, navFragment).commit();
+            } catch (IllegalStateException ignored) {
+            }
+        }
+    }
     public void loadLocale(){
         SharedPreferences pref = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
         String language = pref.getString("Lang","");
@@ -179,4 +193,6 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+
 }

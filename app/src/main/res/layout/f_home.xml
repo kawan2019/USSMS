@@ -45,7 +45,7 @@
                     android:orientation="vertical">
 
                     <ImageButton
-                        android:id="@+id/igb1"
+                        android:id="@+id/igb120"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
                         android:layout_gravity="center"
@@ -70,6 +70,7 @@
                     android:orientation="vertical">
 
                     <ImageButton
+                        android:id="@+id/igb2"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
                         android:layout_gravity="center"

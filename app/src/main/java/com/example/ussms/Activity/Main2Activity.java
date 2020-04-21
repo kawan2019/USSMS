@@ -98,7 +98,7 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.a_main2);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this) ;
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null){mAuth.signOut();}
@@ -155,7 +155,7 @@ public class Main2Activity extends AppCompatActivity {
     private void loginDig() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.login_dialog, null);
+        View dialogView = inflater.inflate(R.layout.d_login, null);
         builder.setView(dialogView);
         edEmailLogin = dialogView.findViewById(R.id.edEmail_login);
         edPasswordLogin = dialogView.findViewById(R.id.edPassword_login);
@@ -166,7 +166,7 @@ public class Main2Activity extends AppCompatActivity {
         btnLoginLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                email = edEmailLogin.getText().toString().trim()+"@uoh.edu.iq";
+                email = edEmailLogin.getText().toString().trim()+"@gmail.com";
                 password = edPasswordLogin.getText().toString().trim();
 
                 btnLoginLogin.setVisibility(View.INVISIBLE);
@@ -203,6 +203,7 @@ public class Main2Activity extends AppCompatActivity {
                                 }
                             }else {
                                 Toast.makeText(getApplicationContext(),task.getException().getMessage()+"",Toast.LENGTH_LONG).show();
+                                Log.d(TAG,task.getException().getMessage());
                             }
                         }
                     });
