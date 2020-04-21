@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,49 +35,70 @@ import com.example.ussms.Fragment.HomeFragmentN;
 import com.example.ussms.R;
 import com.example.ussms.Utils.AnimationUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.firestore.ServerTimestamp;
+import com.tiper.MaterialSpinner;
 import com.wang.avi.AVLoadingIndicatorView;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-
-import es.dmoral.toasty.Toasty;
 
 public class Main2Activity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfigurationn;
     private int mSelectedId;
     private final Handler mDrawerHandler = new Handler();
     private Toolbar toolbar;
-    private AlertDialog alertDialogLogin,alertDialogResendEmail;
+    private AlertDialog alertDialogLogin, alertDialogRegister, alertDialogAllSet,alertDialogResendEmail;
     private DrawerLayout drawer;
+    private boolean validateDepSp = true;
+    private boolean validateLevSp = true;
+    @ServerTimestamp Date time;
     private FirebaseAnalytics mFirebaseAnalytics;
-    private EditText edEmailLogin, edPasswordLogin;
-    private String email, password, username;
-    private Button btnLoginLogin,btnResendEmail;
-    private AVLoadingIndicatorView avi;
-    private String token;
-    private static final String TOKEN = "TOKEN";
+
+    private EditText edEmailLogin, edPasswordLogin, edUsernameRegister, edFullNameRegister, edEmailRegister, edPasswordRegister;
+    TextInputLayout hoUsernameRegister,hoEmailRegister;
+    private String email, emailL, paswwordL, password, fullname, username,department;
+    private String who = "STN_1";
+
+    private int level_;
+    private Button btnLoginLogin, btnRegisterRegister,btnStudentRegister,btnTeacherRegester,btnOkayAllSet,btnResendEmail;
+    private MaterialButtonToggleGroup toggleButton;
+    MaterialSpinner spLevelRegister, spDepartmentRegister;
+    private ImageButton btnCloseRegister, btnCloseLogin;
+     Map<String,Object> user_,logs;
+    private AVLoadingIndicatorView avi, avir;
+    Integer [] Level = {1, 2, 3, 4};
+    final static String USERNAME = "USERNAME";
+    final static String DEPARTMENT = "DEPARTMENT";
+    final static String FULLNAME = "FULLNAME";
+    final static String EMAIL= "EMAIL";
+    final static String LEVEL= "LEVEL";
+    final static String IMEI = "IMEI";
+    final static String DID = "DID";
+    final static String UID = "UID";
+    final static String DATE_CREATION = "DATE_CREATION";
+    final static String STATUS = "STATUS";
+    final static String TYPE = "TYPE";
     private static final String TAG = "EmailPassword";
     private FirebaseAuth mAuth;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
-    Signup cdd;
+    private CollectionReference cr = fsdb.collection("Users");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
-        setContentView(R.layout.a_main2);
+        setContentView(R.layout.activity_main2);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this) ;
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null){mAuth.signOut();}
@@ -133,7 +155,7 @@ public class Main2Activity extends AppCompatActivity {
     private void loginDig() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.d_login, null);
+        View dialogView = inflater.inflate(R.layout.login_dialog, null);
         builder.setView(dialogView);
         edEmailLogin = dialogView.findViewById(R.id.edEmail_login);
         edPasswordLogin = dialogView.findViewById(R.id.edPassword_login);
@@ -144,7 +166,7 @@ public class Main2Activity extends AppCompatActivity {
         btnLoginLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                email = edEmailLogin.getText().toString().trim()+"@gmail.com";
+                email = edEmailLogin.getText().toString().trim()+"@uoh.edu.iq";
                 password = edPasswordLogin.getText().toString().trim();
 
                 btnLoginLogin.setVisibility(View.INVISIBLE);
@@ -163,36 +185,9 @@ public class Main2Activity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()){
                                 if (mAuth.getCurrentUser().isEmailVerified()){
-                                    Toasty.success(getApplicationContext(),"Login Successfully",Toasty.LENGTH_LONG).show();
-                                    FirebaseInstanceId.getInstance().getInstanceId()
-                                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                                    if (!task.isSuccessful()) {
-                                                        Log.w(TAG, "getInstanceId failed", task.getException());
-                                                        return;
-                                                    }
-                                                    token = task.getResult().getToken();
-                                                    username = mAuth.getCurrentUser().getDisplayName();
-                                                    Map<String, Object> userMap = new HashMap<>();
-                                                    userMap.put(TOKEN, token);
-                                                    Log.d(TAG,token);
-                                                    fsdb.collection("Users").document(username).update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG,"Success");
-                                                            avi.hide();
-                                                            startActivity(new Intent(Main2Activity.this,Splash.class));
-                                                        }
-                                                    }).addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.d(TAG,"ERROR"+e.getMessage());
-                                                        }
-                                                    });
-                                                }
-                                            });
-
+                                    Toast.makeText(getApplicationContext(),"Login Successfully",Toast.LENGTH_LONG).show();
+                                    avi.hide();
+                                    startActivity(new Intent(Main2Activity.this,Splash.class));
                                 }else {
                                     alertDialogLogin.dismiss();
                                     View parentLayout = findViewById(android.R.id.content);
@@ -268,7 +263,7 @@ public class Main2Activity extends AppCompatActivity {
     }
     public void toSignUp(final View view) {
         alertDialogLogin.dismiss();
-        cdd=new Signup(Main2Activity.this);
+        Signup cdd=new Signup(Main2Activity.this);
         cdd.show();
 //        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
 //        LayoutInflater inflater = this.getLayoutInflater();
@@ -465,7 +460,7 @@ public class Main2Activity extends AppCompatActivity {
 //        alertDialogRegister = builder.create();
 //        alertDialogRegister.show();
     }
-/*
+
     private void dialogResendEmail(){
         AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -480,10 +475,13 @@ public class Main2Activity extends AppCompatActivity {
                 alertDialogLogin.show();
             }
         });
+
+
         alertDialogResendEmail = builder.create();
         alertDialogResendEmail.show();
+
+
     }
- */
     private void sendEmailVerification() {
         final FirebaseUser user = mAuth.getCurrentUser();
         user.sendEmailVerification()
@@ -504,16 +502,16 @@ public class Main2Activity extends AppCompatActivity {
                 });
     }
     public void toLogin(View view) {
+        alertDialogRegister.dismiss();
         alertDialogLogin.show();
-        cdd.dismiss();
     }
     public void her(View view) {   }
-    private void hideProgressBar() { if (avi!=null){
+    private void hideProgressBar() { if (avir!=null){
         avi.hide();
         btnLoginLogin.setVisibility(View.VISIBLE);
     }}
-    private void showProgressBar() {if (avi!=null){
-        avi.show();
+    private void showProgressBar() {if (avir!=null){
+        avir.show();
         btnLoginLogin.setVisibility(View.INVISIBLE);
     }}
 

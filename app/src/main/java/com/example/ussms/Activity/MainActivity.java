@@ -33,12 +33,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
     private int mSelectedId;
     private final Handler mDrawerHandler = new Handler();
     private Toolbar toolbar;
-    private DrawerLayout drawer;
+    DrawerLayout drawer;
     private AppBarConfiguration mAppBarConfiguration;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,35 +80,22 @@ public class MainActivity extends AppCompatActivity {
         Fragment navFragment = null;
         switch (itemId) {
             case R.id.nav_home:
-                if (mAuth.getCurrentUser() == null){
-                    startActivity(new Intent(this,Splash.class));
-                }
                 setTitle(R.string.menu_home);
                 navFragment = new HomeFragment() ;
                 break;
             case R.id.nav_friend:
-                if (mAuth.getCurrentUser() == null){
-                    startActivity(new Intent(this,Splash.class));
-                }
                 setTitle(R.string.menu_language);
                 navFragment = new Friends();
                 break;
             case R.id.nav_setting:
-                if (mAuth.getCurrentUser() == null){
-                    startActivity(new Intent(this,Splash.class));
-                }
                 Toast.makeText(getApplicationContext(),"sed",Toast.LENGTH_LONG).show();
                 break;
             case R.id.nav_ch:
-                if (mAuth.getCurrentUser() == null){
-                    startActivity(new Intent(this,Splash.class));
-                }
                 changeLanguage();
                 break;
             case R.id.nav_logout:
                 if (mAuth.getCurrentUser() != null){
                     mAuth.signOut();
-                    startActivity(new Intent(this,Splash.class));
                 }else {
                     startActivity(new Intent(this,Splash.class));
                 }
@@ -114,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 Toast.makeText(getApplicationContext(),"ops",Toast.LENGTH_LONG).show();
         }
+
         if (navFragment != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
