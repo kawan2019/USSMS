@@ -13,7 +13,7 @@
         android:layout_margin="15dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/users_list_view"
+            android:id="@+id/RC_friends"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 

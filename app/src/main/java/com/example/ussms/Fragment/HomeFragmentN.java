@@ -23,7 +23,7 @@ public class HomeFragmentN extends Fragment implements View.OnClickListener {
     private FirebaseAuth mAuth;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_home_n, container, false);
+        View root = inflater.inflate(R.layout.f_home_n, container, false);
         fliper = root.findViewById(R.id.fliper);
         mAuth = FirebaseAuth.getInstance();
         root.findViewById(R.id.igb1).setOnClickListener(this);

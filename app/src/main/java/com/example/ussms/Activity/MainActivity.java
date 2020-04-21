@@ -33,19 +33,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-
     private int mSelectedId;
     private final Handler mDrawerHandler = new Handler();
     private Toolbar toolbar;
-    DrawerLayout drawer;
+    private DrawerLayout drawer;
     private AppBarConfiguration mAppBarConfiguration;
-    FirebaseAuth mAuth;
-
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.a_main);
         mAuth = FirebaseAuth.getInstance();
          toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -116,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 Toast.makeText(getApplicationContext(),"ops",Toast.LENGTH_LONG).show();
         }
-
         if (navFragment != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
