@@ -35,6 +35,8 @@ import com.example.ussms.Fragment.HomeFragmentN;
 import com.example.ussms.R;
 import com.example.ussms.Utils.AnimationUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.navigation.NavigationView;
@@ -45,6 +47,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.tiper.MaterialSpinner;
@@ -53,6 +56,8 @@ import com.wang.avi.AVLoadingIndicatorView;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 public class Main2Activity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfigurationn;
@@ -185,9 +190,39 @@ public class Main2Activity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()){
                                 if (mAuth.getCurrentUser().isEmailVerified()){
-                                    Toast.makeText(getApplicationContext(),"Login Successfully",Toast.LENGTH_LONG).show();
-                                    avi.hide();
-                                    startActivity(new Intent(Main2Activity.this,Splash.class));
+
+
+                                    fsdb.collection("Users")
+                                            .document(mAuth.getCurrentUser().getDisplayName())
+                                            .get()
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    if(!documentSnapshot.exists()){
+
+                                                    }else{
+                                                        Toast.makeText(getApplicationContext(),"Login Successfully",Toast.LENGTH_LONG).show();
+                                                        avi.hide();
+                                                        String type = (String) documentSnapshot.get("TYPE");
+
+                                                        SharedPreferences.Editor editor = getSharedPreferences("Account",MODE_PRIVATE).edit();
+                                                        editor.putString("Type",type);
+                                                        editor.apply();
+
+                                                        startActivity(new Intent(Main2Activity.this,Splash.class));
+                                                    }
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.e("Error",e.getMessage());
+                                                }
+                                            });
+
+
+
+
                                 }else {
                                     alertDialogLogin.dismiss();
                                     View parentLayout = findViewById(android.R.id.content);

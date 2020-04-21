@@ -1,6 +1,9 @@
 package com.example.ussms.Fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,8 +24,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
     Fragment classroom = new ClassR();
-
-
+private String language;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.f_home, container, false);
@@ -30,7 +32,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         fliper = root.findViewById(R.id.fliper);
         root.findViewById(R.id.igb120).setOnClickListener(this);
         root.findViewById(R.id.igb2).setOnClickListener(this);
-
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("Account", Context.MODE_PRIVATE);
+        language = preferences.getString("Type","");
         setLayout();
         return root;
     }
@@ -39,6 +42,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         MainActivity m = (MainActivity) getActivity();
         switch (view.getId()) {
             case R.id.igb120:
+Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
                 m.g(classroom);
                 break;
             case R.id.igb2:

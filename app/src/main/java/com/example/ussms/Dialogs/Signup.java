@@ -394,7 +394,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
             who = "STN_1";
             spLevelRegister.setVisibility(View.VISIBLE);
         }else if (v.getId() == R.id.TCHN_1){
-            who = "STN_1";
+            who = "TCHN_1";
             spLevelRegister.setVisibility(View.GONE);
         }else if (v.getId() == R.id.btnClose_register){
             dismiss();
