@@ -77,6 +77,11 @@ public class Friends extends Fragment {
         adapter.startListening();
 
     }
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
 
     private class UsersViewHolder extends RecyclerView.ViewHolder{
         private TextView tv_username,tv_fullname,tv_uid;
