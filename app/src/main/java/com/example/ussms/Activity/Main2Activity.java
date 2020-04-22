@@ -50,10 +50,13 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.tiper.MaterialSpinner;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -99,6 +102,8 @@ public class Main2Activity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private CollectionReference cr = fsdb.collection("Users");
+    private String TOKEN="TOKEN";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,8 +195,6 @@ public class Main2Activity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()){
                                 if (mAuth.getCurrentUser().isEmailVerified()){
-
-
                                     fsdb.collection("Users")
                                             .document(mAuth.getCurrentUser().getDisplayName())
                                             .get()
@@ -201,7 +204,7 @@ public class Main2Activity extends AppCompatActivity {
                                                     if(!documentSnapshot.exists()){
 
                                                     }else{
-                                                        Toast.makeText(getApplicationContext(),"Login Successfully",Toast.LENGTH_LONG).show();
+
                                                         avi.hide();
                                                         String type = (String) documentSnapshot.get("TYPE");
 
@@ -209,7 +212,38 @@ public class Main2Activity extends AppCompatActivity {
                                                         editor.putString("Type",type);
                                                         editor.apply();
 
-                                                        startActivity(new Intent(Main2Activity.this,Splash.class));
+                                                        FirebaseInstanceId.getInstance().getInstanceId()
+                                                                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                                        if (!task.isSuccessful()) {
+                                                                            Log.w(TAG, "getInstanceId failed", task.getException());
+                                                                            hideProgressBar();
+                                                                            return;
+                                                                        }
+                                                                        String token = task.getResult().getToken();
+                                                                        Map<String, Object> userMap = new HashMap<>();
+                                                                        Log.d(TAG,token);
+                                                                        userMap.put(TOKEN, token);
+                                                                        fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                startActivity(new Intent(Main2Activity.this,Splash.class));
+                                                                                Toasty.success(getApplicationContext(), "Login Successfully", Toast.LENGTH_LONG).show();
+                                                                            }
+                                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Toasty.error(getApplicationContext(), "An Error", Toast.LENGTH_LONG).show();
+                                                                                hideProgressBar();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+
+
+
+
                                                     }
                                                 }
                                             })
@@ -219,10 +253,6 @@ public class Main2Activity extends AppCompatActivity {
                                                     Log.e("Error",e.getMessage());
                                                 }
                                             });
-
-
-
-
                                 }else {
                                     alertDialogLogin.dismiss();
                                     View parentLayout = findViewById(android.R.id.content);
@@ -239,6 +269,7 @@ public class Main2Activity extends AppCompatActivity {
                             }else {
                                 Toast.makeText(getApplicationContext(),task.getException().getMessage()+"",Toast.LENGTH_LONG).show();
                                 Log.d(TAG,task.getException().getMessage());
+                                hideProgressBar();
                             }
                         }
                     });

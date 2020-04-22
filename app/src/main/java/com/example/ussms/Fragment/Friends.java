@@ -21,6 +21,7 @@ import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -38,6 +39,7 @@ public class Friends extends Fragment {
     ArrayList<String> checked = new ArrayList<String>();
     FloatingActionButton fab;
     StringBuffer stringBuffer;
+    FirebaseAuth mAuth;
     String[] mStrings;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     public Friends() {
@@ -49,12 +51,15 @@ public class Friends extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.f_friends, container, false);
 
+        mAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.RC_friends);
         mFirestore = FirebaseFirestore.getInstance();
         fab = view.findViewById(R.id.floating_action_button);
         final Map<String,Object> msg =new HashMap<>();
         msg.put("title","hola");
         msg.put("msg","hhh Chone nsn");
+        msg.put("from",mAuth.getCurrentUser().getDisplayName());
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +77,8 @@ public class Friends extends Fragment {
 
                 }
                 for (int j =0;mStrings.length>j;j++){
-                    fsdb.collection("Users").document(mStrings[j]).collection("Message").document().set(msg);
+                    msg.put("userUid",mStrings[j]);
+                    fsdb.collection("messages").document().set(msg);
                     Log.d("PLOPA",mStrings[j]);
 //                    fsdb.collection("Users").document(mStrings[j]).collection("Messages").document().set(msg)
 //                            .addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
@@ -28,20 +29,29 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.ussms.Fragment.Friends;
 import com.example.ussms.Fragment.HomeFragment;
 import com.example.ussms.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TOKEN ="TOKEN" ;
     private int mSelectedId;
     private final Handler mDrawerHandler = new Handler();
     private Toolbar toolbar;
     DrawerLayout drawer;
     private ImageButton igb_classroom;
     private AppBarConfiguration mAppBarConfiguration;
+    private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth;
 
     @Override
@@ -49,7 +59,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.a_main);
+
+
         mAuth = FirebaseAuth.getInstance();
+
+        Log.d("TOKENGG", FirebaseInstanceId.getInstance().getToken());
          toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
@@ -98,7 +112,22 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_logout:
                 if (mAuth.getCurrentUser() != null){
-                    mAuth.signOut();
+                    Map<String, Object> userMap = new HashMap<>();
+                    userMap.put(TOKEN, "");
+                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            mAuth.signOut();
+                            startActivity(new Intent(getApplicationContext(),Splash.class));
+                            Toasty.success(getApplicationContext(), "Logout Successfully", Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toasty.error(getApplicationContext(), "An Error", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
                 }else {
                     startActivity(new Intent(this,Splash.class));
                 }
@@ -117,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 
     private void changeLanguage() {
         final String[] listItems = {"English","کوردی"};
