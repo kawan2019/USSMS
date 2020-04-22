@@ -16,25 +16,32 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/RC_friends"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="300dp"
-            android:layout_marginTop="632dp"
-            android:layout_marginEnd="26dp"
-            android:layout_marginBottom="14dp"
-            android:clickable="true"
-            android:src="@drawable/ic_menu_send" />
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
 
     </RelativeLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:rippleColor="#82f8f2"
+        app:borderWidth="20dp"
+        app:srcCompat="@drawable/ic_menu_send"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+
+        />
 
 </FrameLayout>

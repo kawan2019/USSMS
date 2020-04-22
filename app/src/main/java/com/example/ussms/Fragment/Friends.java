@@ -1,6 +1,7 @@
 package com.example.ussms.Fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,6 +38,8 @@ public class Friends extends Fragment {
     ArrayList<String> checked = new ArrayList<String>();
     FloatingActionButton fab;
     StringBuffer stringBuffer;
+    String[] mStrings;
+    private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     public Friends() {
     }
 
@@ -46,20 +51,41 @@ public class Friends extends Fragment {
 
         recyclerView = view.findViewById(R.id.RC_friends);
         mFirestore = FirebaseFirestore.getInstance();
-        fab = view.findViewById(R.id.floatingActionButton);
+        fab = view.findViewById(R.id.floating_action_button);
+        final Map<String,Object> msg =new HashMap<>();
+        msg.put("title","hola");
+        msg.put("msg","hhh Chone nsn");
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stringBuffer =new StringBuffer();
+                mStrings = new String[checked.size()];
+                int i =0;
                 for (String s : checked){
+                    mStrings[i] = s;
                     stringBuffer.append(s);
                     stringBuffer.append("\n");
-
+                    Toast.makeText(getContext(),mStrings.length+"",Toast.LENGTH_LONG).show();
+                i++;
                 }
                 if (checked.size() >0){
-                    Toast.makeText(getContext(),stringBuffer.toString(),Toast.LENGTH_LONG).show();
-                }
 
+                }
+                for (int j =0;mStrings.length>j;j++){
+                    fsdb.collection("Users").document(mStrings[j]).collection("Message").document().set(msg);
+                    Log.d("PLOPA",mStrings[j]);
+//                    fsdb.collection("Users").document(mStrings[j]).collection("Messages").document().set(msg)
+//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()){
+//                                Toasty.success(getContext(),mStrings.length+"",Toast.LENGTH_LONG,true).show();
+//                            }else {
+//                                Toasty.error(getContext(),task.getException().getMessage()+"",Toast.LENGTH_LONG,true).show();
+//                            }
+//                        }
+//                    });
+                }
             }
         });
 
@@ -105,6 +131,7 @@ public class Friends extends Fragment {
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(adapter);
+
     return view;
 
     }
@@ -112,7 +139,6 @@ public class Friends extends Fragment {
     public void onStart() {
         super.onStart();
         adapter.startListening();
-
     }
     @Override
     public void onStop() {
