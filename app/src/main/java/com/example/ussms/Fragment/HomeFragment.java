@@ -1,6 +1,5 @@
 package com.example.ussms.Fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +22,7 @@ import technolifestyle.com.imageslider.FlipperView;
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
-    Fragment classroom = new ClassR();
+    Fragment classroom = new classRoom_Main_t();
 private String language;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,7 +41,7 @@ private String language;
         MainActivity m = (MainActivity) getActivity();
         switch (view.getId()) {
             case R.id.igb120:
-Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
+               Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
                 m.g(classroom);
                 break;
             case R.id.igb2:

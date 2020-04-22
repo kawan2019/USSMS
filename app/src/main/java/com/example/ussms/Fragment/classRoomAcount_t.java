@@ -13,17 +13,17 @@ import com.example.ussms.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ClassR extends Fragment {
+public class classRoomAcount_t extends Fragment {
 
-    public ClassR() {
-
+    public classRoomAcount_t() {
+        // Required empty public constructor
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        return inflater.inflate(R.layout.f_class_r, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.f_class_room_acount_t, container, false);
     }
 }
