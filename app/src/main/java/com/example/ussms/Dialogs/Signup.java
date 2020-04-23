@@ -119,13 +119,16 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
         findViewById(R.id.btnClose_register).setOnClickListener(this);
         findViewById(R.id.STN_1).setOnClickListener(this);
         findViewById(R.id.TCHN_1).setOnClickListener(this);
+
         ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, Level);
         adp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spLevelRegister.setAdapter(adp2);
+
         ArrayAdapter<CharSequence> adp3 = ArrayAdapter.createFromResource(getContext(), R.array.departments_array
                 , android.R.layout.simple_list_item_1);
         adp3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDepartmentRegister.setAdapter(adp3);
+
         spDepartmentRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
@@ -137,6 +140,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
                 validateDepSp = true;
             }
         });
+
         spLevelRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {

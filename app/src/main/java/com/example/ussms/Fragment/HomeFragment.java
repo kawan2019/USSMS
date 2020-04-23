@@ -22,7 +22,7 @@ import technolifestyle.com.imageslider.FlipperView;
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
-    Fragment classroom = new classRoom_Main_t();
+    Fragment classroom = new ClassR_t();
 private String language;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

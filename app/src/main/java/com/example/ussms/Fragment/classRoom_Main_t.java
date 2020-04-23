@@ -1,5 +1,6 @@
 package com.example.ussms.Fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.example.ussms.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,13 +25,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class classRoom_Main_t extends Fragment {
 
     private BottomNavigationView mainbottomNav;
-    private FragmentActivity myContext;
+
+
 
 
     private classRoomHome_t homeFragment;
     private classRoomNotification_t notificationFragment;
     private classRoomAcount_t accountFragment;
-
+    FragmentActivity myContext;
     public classRoom_Main_t() {
         // Required empty public constructor
     }
@@ -52,7 +57,6 @@ public class classRoom_Main_t extends Fragment {
         mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
                 Fragment currentFragment = myContext.getSupportFragmentManager().findFragmentById(R.id.main_container);
 
                 switch (item.getItemId()) {
@@ -84,9 +88,13 @@ public class classRoom_Main_t extends Fragment {
 
         return view;
     }
+    @Override
+    public void onAttach(Activity activity) {
+        myContext=(FragmentActivity) activity;
+        super.onAttach(activity);
+    }
 
     private void initializeFragment(){
-
         FragmentTransaction fragmentTransaction = myContext.getSupportFragmentManager().beginTransaction();
 
         fragmentTransaction.add(R.id.main_container, homeFragment);
@@ -101,7 +109,6 @@ public class classRoom_Main_t extends Fragment {
     }
 
     private void replaceFragment(Fragment fragment, Fragment currentFragment){
-
         FragmentTransaction fragmentTransaction = myContext.getSupportFragmentManager().beginTransaction();
         if(fragment == homeFragment){
 
