@@ -43,10 +43,7 @@ public class Friends extends Fragment {
     FirebaseAuth mAuth;
     String[] mStrings;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
-    public Friends() {
-    }
-
-
+    public Friends() { }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -95,6 +92,9 @@ public class Friends extends Fragment {
         FirestoreRecyclerOptions<Users> options = new FirestoreRecyclerOptions.Builder<Users>()
                 .setQuery(query, Users.class)
                 .build();
+
+
+
 
         adapter = new FirestoreRecyclerAdapter<Users, UsersViewHolder>(options) {
             @NonNull

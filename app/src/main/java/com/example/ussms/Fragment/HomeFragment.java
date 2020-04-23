@@ -5,37 +5,59 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.R;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import es.dmoral.toasty.Toasty;
 import technolifestyle.com.imageslider.FlipperLayout;
 import technolifestyle.com.imageslider.FlipperView;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
+    FirebaseAuth mAuth;
     Fragment classroom = new classRoom_Main_t();
+    FirestoreRecyclerAdapter adapter;
+    private TextView tv;
+    Handler handler = new Handler();
+    private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
 private String language;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.f_home, container, false);
-
+        tv = root.findViewById(R.id.tv_noti_f_home);
         fliper = root.findViewById(R.id.fliper);
         root.findViewById(R.id.igb120).setOnClickListener(this);
         root.findViewById(R.id.igb2).setOnClickListener(this);
+        mAuth = FirebaseAuth.getInstance();
+        this.handler.postDelayed(m_Runnable,1000);
+
         SharedPreferences preferences = this.getActivity().getSharedPreferences("Account", Context.MODE_PRIVATE);
         language = preferences.getString("Type","");
         setLayout();
         return root;
     }
+
     @Override
     public void onClick(View view) {
         MainActivity m = (MainActivity) getActivity();
@@ -94,5 +116,47 @@ private String language;
             });
         }
 
+    }
+
+    private class NotificationViewHolder extends RecyclerView.ViewHolder {
+        public NotificationViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+    private final Runnable m_Runnable = new Runnable() {
+        public void run() {
+
+            fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).collection("Message")
+                    .whereEqualTo("status", false)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                int i = 0;
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    i++;
+                                }
+                                if (i == 0){
+                                    tv.setText("");
+                                }else {
+                                    tv.setBackground(getResources().getDrawable(R.drawable.bg_tv_notification_f_home));
+                                    tv.setText(""+i);
+                                }
+
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+            HomeFragment.this.handler.postDelayed(m_Runnable, 3000);
+        }
+
+    };
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(m_Runnable);
     }
 }
