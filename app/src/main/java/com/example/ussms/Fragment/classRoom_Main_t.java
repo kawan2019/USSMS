@@ -1,16 +1,16 @@
 package com.example.ussms.Fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.ussms.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -83,6 +83,11 @@ public class classRoom_Main_t extends Fragment {
 
 
         return view;
+    }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        myContext = (FragmentActivity) activity;
     }
 
     private void initializeFragment(){
