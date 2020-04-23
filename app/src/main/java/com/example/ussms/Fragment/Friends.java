@@ -22,6 +22,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -57,8 +58,13 @@ public class Friends extends Fragment {
         fab = view.findViewById(R.id.floating_action_button);
         final Map<String,Object> msg =new HashMap<>();
         msg.put("title","hola");
-        msg.put("msg","hhh Chone nsn");
+        msg.put("message","hhh Chone nsn");
         msg.put("from",mAuth.getCurrentUser().getDisplayName());
+        msg.put("timestamp",FieldValue.serverTimestamp());
+        msg.put("Photo",mAuth.getCurrentUser().getPhotoUrl()+toString());
+        msg.put("status",false);
+        msg.put("category","classroom");
+        msg.put("category_photo","https://cdn.iconscout.com/icon/premium/png-256-thumb/classroom-77-731046.png");
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,19 +84,8 @@ public class Friends extends Fragment {
                 }
                 for (int j =0;mStrings.length>j;j++){
                     msg.put("userUid",mStrings[j]);
-                    fsdb.collection("messages").document().set(msg);
+                    fsdb.collection("Users").document(mStrings[j]).collection("Message").document().set(msg);
                     Log.d("PLOPA",mStrings[j]);
-//                    fsdb.collection("Users").document(mStrings[j]).collection("Messages").document().set(msg)
-//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task) {
-//                            if (task.isSuccessful()){
-//                                Toasty.success(getContext(),mStrings.length+"",Toast.LENGTH_LONG,true).show();
-//                            }else {
-//                                Toasty.error(getContext(),task.getException().getMessage()+"",Toast.LENGTH_LONG,true).show();
-//                            }
-//                        }
-//                    });
                 }
             }
         });
@@ -179,4 +174,5 @@ public class Friends extends Fragment {
             this.itemClickListener.onItemClick(v,getLayoutPosition());
         }
     }
+    private String getDate() {return FieldValue.serverTimestamp().toString();}
 }
