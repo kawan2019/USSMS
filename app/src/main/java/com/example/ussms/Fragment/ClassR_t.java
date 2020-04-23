@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,8 @@ public class ClassR_t extends Fragment {
     private RecyclerView mClassList;
     private Spinner mLevelClass;
     private  EditText mNameClass;
+    private String mUserId;
+
 
     private ImageView mImageTecher;
     private Button mClassBtn;
@@ -100,6 +103,44 @@ public class ClassR_t extends Fragment {
 
                                                   }
                                               });
+
+        mClassBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String message = mNameClass.getText().toString();
+
+                if (!TextUtils.isEmpty(message)){
+
+
+                    Map<String,Object> cla = new HashMap<>();
+                    cla.put("message",message);
+
+
+                    mFirestore.collection("Users/"+mUserId+"/Class").add(cla).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+
+                            Toast.makeText(getContext(), "complate", Toast.LENGTH_LONG).show();
+
+                            mNameClass.setText("");
+
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Toast.makeText(getContext(), "Error : "+e.getMessage(), Toast.LENGTH_LONG).show();
+
+
+
+                        }
+                    });
+                }
+
+            }
+        });
 
 
                 //Qurry
