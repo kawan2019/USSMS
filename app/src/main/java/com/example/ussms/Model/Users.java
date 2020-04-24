@@ -5,14 +5,18 @@ public class Users {
     private String UID;
     private String FULLNAME;
     private String IMAGE;
+    private String NameClass;
+    private String LevelClass;
 
     private Users(){
     }
-    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE){
+    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE,String NameClass, String LevelClass){
         this.USERNAME = USERNAME;
         this.UID = UID;
         this.FULLNAME = FULLNAME;
         this.IMAGE = IMAGE;
+        this.NameClass = NameClass;
+        this.LevelClass = LevelClass;
 
     }
 
@@ -48,6 +52,22 @@ public class Users {
         this.FULLNAME = FULLNAME;
     }
 
+
+    public String getNameClass() {
+        return NameClass;
+    }
+
+    public void setNameClass(String nameClass) {
+        NameClass = nameClass;
+    }
+
+    public String getLevelClass() {
+        return LevelClass;
+    }
+
+    public void setLevelClass(String levelClass) {
+        LevelClass = levelClass;
+    }
 
 
 }

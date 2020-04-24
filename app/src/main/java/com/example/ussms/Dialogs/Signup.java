@@ -56,9 +56,9 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
 
     private boolean validateDepSp = true;
     private boolean validateLevSp = true;
-     private String username;
-     private String token;
-     private String email, password, fullname;
+    private String username;
+    private String token;
+    private String email, password, fullname;
     private String who = "STN_1",department;
     int level_;
 

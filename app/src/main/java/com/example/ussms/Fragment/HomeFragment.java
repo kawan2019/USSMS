@@ -36,7 +36,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
     FirebaseAuth mAuth;
-    Fragment classroom = new classRoom_Main_t();
+    Fragment classroom = new ClassR_t();
     FirestoreRecyclerAdapter adapter;
     private TextView tv;
     Handler handler = new Handler();
