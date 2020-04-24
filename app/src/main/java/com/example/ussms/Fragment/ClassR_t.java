@@ -116,17 +116,18 @@ public class ClassR_t extends Fragment {
 
 
                         String Nclass = mNameClass.getText().toString();
-                         String levl = mLevelClass.getSelectedItem().toString();
+                        int levl = mLevelClass.getSelectedItemPosition();
 
 
-                if (!TextUtils.isEmpty(Nclass)){
+
+                        if (!TextUtils.isEmpty(Nclass)){
 
 
-                            Map<String,Object> clas = new HashMap<>();
-                            clas.put("NameClass ",Nclass);
-                            clas.put("LevelClass", levl);
+                            Map<String,Object> c = new HashMap<>();
+                            c.put("CLA ",Nclass);
+                            c.put("LEV", levl);
 
-                            fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).collection("class").document().set(clas);
+                            fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).collection("Classroom").document().set(c);
 
 
                             mNameClass.setText("");
@@ -156,7 +157,7 @@ public class ClassR_t extends Fragment {
 
                 //Qurry
 
-                Query query = fsdb.collection("Users");
+                Query query = fsdb.collection("Users").document().collection("Classroom");
         //Recycleroption
         FirestoreRecyclerOptions<Users> options = new FirestoreRecyclerOptions.Builder<Users>()
                 .setQuery(query, Users.class)
@@ -177,7 +178,7 @@ public class ClassR_t extends Fragment {
             protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull  Users users) {
 
                 holder.mNmae_t.setText(users.getUSERNAME());
-               holder.mName_c.setText(users.getNameClass());
+               holder.mName_c.setText(users.getCLA());
 
 
 

@@ -1,22 +1,23 @@
 package com.example.ussms.Model;
 
-public class Users {
+public class Users  {
     private String USERNAME;
     private String UID;
     private String FULLNAME;
     private String IMAGE;
-    private String NameClass;
-    private String LevelClass;
+    private String CLA;
+
 
     private Users(){
     }
-    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE,String NameClass, String LevelClass){
+    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE,String CLA){
         this.USERNAME = USERNAME;
         this.UID = UID;
         this.FULLNAME = FULLNAME;
         this.IMAGE = IMAGE;
-        this.NameClass = NameClass;
-        this.LevelClass = LevelClass;
+        this.CLA = CLA;
+
+
 
     }
 
@@ -53,21 +54,18 @@ public class Users {
     }
 
 
-    public String getNameClass() {
-        return NameClass;
+    public String getCLA() {
+        return CLA;
     }
 
-    public void setNameClass(String nameClass) {
-        NameClass = nameClass;
+    public void setCLA(String CLA) {
+        this.CLA = CLA;
     }
 
-    public String getLevelClass() {
-        return LevelClass;
-    }
 
-    public void setLevelClass(String levelClass) {
-        LevelClass = levelClass;
-    }
+
+
+
 
 
 }
