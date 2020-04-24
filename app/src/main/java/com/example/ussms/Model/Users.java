@@ -5,17 +5,16 @@ public class Users  {
     private String UID;
     private String FULLNAME;
     private String IMAGE;
-    private String CLA;
+
 
 
     private Users(){
     }
-    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE,String CLA){
+    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE){
         this.USERNAME = USERNAME;
         this.UID = UID;
         this.FULLNAME = FULLNAME;
         this.IMAGE = IMAGE;
-        this.CLA = CLA;
 
 
 
@@ -52,19 +51,6 @@ public class Users  {
     public void setFULLNAME(String FULLNAME) {
         this.FULLNAME = FULLNAME;
     }
-
-
-    public String getCLA() {
-        return CLA;
-    }
-
-    public void setCLA(String CLA) {
-        this.CLA = CLA;
-    }
-
-
-
-
 
 
 

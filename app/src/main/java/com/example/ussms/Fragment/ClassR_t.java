@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.ussms.Abstracts.ItemClickListener;
 import com.example.ussms.Model.Users;
+import com.example.ussms.Model.classUser;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -40,6 +41,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tiper.MaterialSpinner;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,31 +59,33 @@ public class ClassR_t extends Fragment {
 
     private RecyclerView mClassList;
     private Spinner mLevelClass;
-    private  EditText mNameClass;
+    private EditText mNameClass;
 
     private ImageView mImageTecher;
     private Button mClassBtn;
 
-   private FirestoreRecyclerAdapter adapter;
+    private FirestoreRecyclerAdapter adapter;
 
     private boolean validateDepSp = true;
     private boolean validateLevSp = true;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
     Integer[] Level = {1, 2, 3, 4};
-    public ClassR_t() { }
+
+    public ClassR_t() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view= inflater.inflate(R.layout.f_class_r_t, container, false);
+        View view = inflater.inflate(R.layout.f_class_r_t, container, false);
         mClassList = view.findViewById(R.id.class_list);
         mClassBtn = view.findViewById(R.id.class_btn);
         mNameClass = view.findViewById(R.id.edClass_name);
         mLevelClass = view.findViewById(R.id.level_class);
 
         mAuth = FirebaseAuth.getInstance();
-
 
 
         ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, Level);
@@ -91,7 +96,7 @@ public class ClassR_t extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-              int  level_ = i+1;
+                int level_ = i + 1;
 
                 fsdb.collection("Users").whereEqualTo("LEVEL", level_)
                         .get()
@@ -100,7 +105,7 @@ public class ClassR_t extends Fragment {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Log.d("DOCC", document.getId() );
+                                        Log.d("DOCC", document.getId());
 
                                     }
                                 } else {
@@ -114,25 +119,21 @@ public class ClassR_t extends Fragment {
                     public void onClick(View view) {
 
 
-
                         String Nclass = mNameClass.getText().toString();
                         int levl = mLevelClass.getSelectedItemPosition();
 
 
+                        if (!TextUtils.isEmpty(Nclass)) {
 
-                        if (!TextUtils.isEmpty(Nclass)){
 
-
-                            Map<String,Object> c = new HashMap<>();
-                            c.put("CLA ",Nclass);
-                            c.put("LEV", levl);
+                            Map<String, Object> c = new HashMap<>();
+                            c.put("CLASSROOM", Nclass);
+                            c.put("LEVEL", levl);
 
                             fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).collection("Classroom").document().set(c);
 
 
                             mNameClass.setText("");
-
-
 
 
                         }
@@ -141,9 +142,8 @@ public class ClassR_t extends Fragment {
                 });
 
 
-
-
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -151,63 +151,45 @@ public class ClassR_t extends Fragment {
         });
 
 
+        //Qurry
 
+        Query query = fsdb.collection("Users").document().collection("Classroom");
 
-
-
-                //Qurry
-
-                Query query = fsdb.collection("Users").document().collection("Classroom");
         //Recycleroption
-        FirestoreRecyclerOptions<Users> options = new FirestoreRecyclerOptions.Builder<Users>()
-                .setQuery(query, Users.class)
+        FirestoreRecyclerOptions<classUser> options = new FirestoreRecyclerOptions.Builder<classUser>()
+                .setQuery(query, classUser.class)
                 .build();
 
 
-         adapter =  new FirestoreRecyclerAdapter<Users,UsersViewHolder> (options){
+        adapter = new FirestoreRecyclerAdapter<classUser, ClassR_t.UsersViewHolder>(options) {
             @NonNull
             @Override
-            public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            public ClassR_t.UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.l_subject_list_item, parent, false);
 
-                View ClassView = LayoutInflater.from(parent.getContext()).inflate(R.layout.l_subject_list_item,parent,false);
-
-                return new UsersViewHolder(ClassView);
+                return new ClassR_t.UsersViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull  Users users) {
+            protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull classUser classUser) {
 
-                holder.mNmae_t.setText(users.getUSERNAME());
-               holder.mName_c.setText(users.getCLA());
-
-
+                holder.mNaeClass.setText(classUser.getCLASSROOM());
 
             }
-
-
-            //viewHolder
-
-    };
+        };
 
         mClassList.setHasFixedSize(true);
         mClassList.setLayoutManager(new LinearLayoutManager(getContext()));
         mClassList.setAdapter(adapter);
 
- return view;
-}
+        return view;
 
+    }
 
-    private class UsersViewHolder extends RecyclerView.ViewHolder{
-
-        private TextView mNmae_t;
-        private TextView mName_c;
-
-        public UsersViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            mName_c = itemView.findViewById(R.id.name_class);
-            mNmae_t = itemView.findViewById(R.id.name_techer);
-        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
     }
 
     @Override
@@ -216,9 +198,16 @@ public class ClassR_t extends Fragment {
         adapter.stopListening();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
+    private class UsersViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView mNaeClass;
+
+        public UsersViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            mNameClass = itemView.findViewById(R.id.name_class);
+
+        }
     }
+
 }
