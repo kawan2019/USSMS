@@ -22,66 +22,41 @@ public class classRoom_Main_t extends Fragment {
 
     private BottomNavigationView mainbottomNav;
     private FragmentActivity myContext;
-
-
     private classRoomHome_t homeFragment;
     private classRoomNotification_t notificationFragment;
     private classRoomAcount_t accountFragment;
 
-    public classRoom_Main_t() {
-        // Required empty public constructor
-    }
-
-
+    public classRoom_Main_t() {}
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
      View view = inflater.inflate(R.layout.f_class_room__main_t, container, false);
 
         mainbottomNav = view.findViewById(R.id.mainBottomNav);
 
-
-        // FRAGMENTS
         homeFragment = new classRoomHome_t();
         notificationFragment = new classRoomNotification_t();
         accountFragment = new classRoomAcount_t();
 
         initializeFragment();
-
         mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
                 Fragment currentFragment = myContext.getSupportFragmentManager().findFragmentById(R.id.main_container);
-
                 switch (item.getItemId()) {
-
-                    case R.id.bottom_action_home:
-
+                    case R.id.bottom_item_home_cr:
                         replaceFragment(homeFragment, currentFragment);
                         return true;
-
-                    case R.id.bottom_action_account:
-
+                    case R.id.bottom_item_profile_cr:
                         replaceFragment(accountFragment, currentFragment);
                         return true;
-
-                    case R.id.bottom_action_notif:
-
+                    case R.id.bottom_item_notifi_cr:
                         replaceFragment(notificationFragment, currentFragment);
                         return true;
-
                     default:
                         return false;
-
-
                 }
-
             }
         });
-
-
         return view;
     }
     @Override
@@ -89,50 +64,30 @@ public class classRoom_Main_t extends Fragment {
         super.onAttach(activity);
         myContext = (FragmentActivity) activity;
     }
-
     private void initializeFragment(){
-
         FragmentTransaction fragmentTransaction = myContext.getSupportFragmentManager().beginTransaction();
-
         fragmentTransaction.add(R.id.main_container, homeFragment);
         fragmentTransaction.add(R.id.main_container, notificationFragment);
         fragmentTransaction.add(R.id.main_container, accountFragment);
-
         fragmentTransaction.hide(notificationFragment);
         fragmentTransaction.hide(accountFragment);
-
         fragmentTransaction.commit();
-
     }
-
     private void replaceFragment(Fragment fragment, Fragment currentFragment){
-
         FragmentTransaction fragmentTransaction = myContext.getSupportFragmentManager().beginTransaction();
         if(fragment == homeFragment){
-
             fragmentTransaction.hide(accountFragment);
             fragmentTransaction.hide(notificationFragment);
-
         }
-
         if(fragment == accountFragment){
-
             fragmentTransaction.hide(homeFragment);
             fragmentTransaction.hide(notificationFragment);
-
         }
-
         if(fragment == notificationFragment){
-
             fragmentTransaction.hide(homeFragment);
             fragmentTransaction.hide(accountFragment);
-
         }
         fragmentTransaction.show(fragment);
-
-        //fragmentTransaction.replace(R.id.main_container, fragment);
         fragmentTransaction.commit();
-
     }
-
 }

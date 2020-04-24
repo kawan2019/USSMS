@@ -28,7 +28,7 @@
     <string name="menu_send">Send</string>
     <string name="menu_login">Login</string>
     <string name="home_btn1">Class Room</string>
-    <string name="home_btn2">btn2</string>
+    <string name="home_btn2">University Activity</string>
     <string name="home_btn3">btn3</string>
     <string name="home_btn4">btn4</string>
     <string name="home_btn5">btn5</string>
@@ -68,6 +68,7 @@
     <string name="todo">TODO</string>
     <string name="default_notification_channel_id">abcd</string>
     <string name="fcm_message">hhhh</string>
+    <string name="title_a_news">News</string>
 
     <string-array name="departments_array">
         <item>Computer</item>
