@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ussms.Activity.MainActivity;
+import com.example.ussms.Activity.News;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -67,7 +67,7 @@ private String language;
                 m.g(classroom);
                 break;
             case R.id.igb2:
-                m.g(friends);
+                startActivity(new Intent(getContext(), News.class));
                 break;
             default:
 
@@ -75,25 +75,32 @@ private String language;
 
     }
 
-
-
     private void setLayout() {
         final String url[]=new String[]{
-                "https://uoh.edu.iq/ku/wp-content/uploads/2019/03/سشسش.jpg",
+                "https://uoh.edu.iq/sci/wp-content/uploads/2019/05/IMG_20190516_151628.jpg",
+                "https://uoh.edu.iq/ku/wp-content/uploads/2019/11/DSC_0433.jpg",
                 "https://uoh.edu.iq/ku/wp-content/uploads/2019/03/DSC_0291.jpg",
+                "https://uoh.edu.iq/ku/wp-content/uploads/2020/03/nwe-1-1200x600.jpg",
+                "https://uoh.edu.iq/ku/wp-content/uploads/2020/03/viber_image_2020-03-10_07-31-27-960x600.jpg",
                 "https://uoh.edu.iq/ku/wp-content/uploads/2019/03/DSC_0410.jpg"
         };
         final String url1[]=new String[]{
-                "https://uoh.edu.iq/ku/4362/",
+                "https://uoh.edu.iq/sci/%d8%ae%d9%88%db%8e%d9%86%d8%af%da%a9%d8%a7%d8%b1%d8%a7%d9%86%db%8c-%d9%82%db%86%d9%86%d8%a7%d8%ba%db%8c-%d8%b3%db%8e%db%8c%db%95%d9%85%db%8c-%d8%a8%db%95%d8%b4%db%8c-%d8%b2%d8%a7%d9%86%d8%b3%d8%aa/",
+                "https://uoh.edu.iq/ku/5990/",
                 "https://uoh.edu.iq/ku/4305/",
+                "https://uoh.edu.iq/ku/7027/",
+                "https://uoh.edu.iq/ku/7020/",
                 "https://uoh.edu.iq/ku/4328/"
         };
         final String dis[]=new String[]{
-                "زانكۆی هه\u200Cڵه\u200Cبجه\u200C و په\u200Cیمانگای فێڵسبێرگه\u200Cی ئه\u200Cڵمانی توێژینه\u200Cوه\u200Cیه\u200Cك ئه\u200Cنجام ده\u200Cده\u200Cن",
+                "خوێندکارانی قۆناغی سێیەمی بەشی زانستی کۆمپیوتەر گەشتێكی زانستی ئەنجام دەدەن",
+                "زانکۆی هەڵەبجە پێشوازی لەخوێندکارانی قۆناغی یەکەم دەکات",
                 "په\u200Cیمانگایه\u200Cكی ئه\u200Cڵمانی به\u200Cهاوكاری زانكۆی هه\u200Cڵه\u200Cبجه\u200C توێژینه\u200Cوه\u200Cیه\u200Cك له\u200Cسه\u200Cر كیمیابارانكردنی شاره\u200Cكه\u200C ئه\u200Cنجامده\u200Cدات",
+                "سەرۆكی زانكۆی هەڵەبجە بەیاوەری ژمارەیەك لە ئەندامانی ئەنجومەنی زانكۆی هەڵەبجە، سەردانی مەزاری شەهیدان دەكات",
+                "زانكۆی هەڵەبجە بەمەبەستی كاری هاوبەشی زانستی زیاتر لەگەڵ زانكۆی گەرمیاندا پرۆتۆكۆلێكی لێك تێگەیشتنیان واژۆ كرد",
                 "زانكۆی هه\u200Cڵه\u200Cبجه\u200C ماراسۆنی نێوده\u200Cوڵه\u200Cتی هه\u200Cڵه\u200Cبجه\u200Cی ئه\u200Cنجامدا"
         };
-        for (int i=0;i<3;i++){
+        for (int i=0;i<6;i++){
             FlipperView view= new FlipperView(getContext());
             view.setImageUrl(url[i]);
             view.setDescription(dis[i]);
@@ -116,12 +123,6 @@ private String language;
             });
         }
 
-    }
-
-    private class NotificationViewHolder extends RecyclerView.ViewHolder {
-        public NotificationViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
     }
     private final Runnable m_Runnable = new Runnable() {
         public void run() {

@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bottom_action_home"
+        android:id="@+id/bottom_item_home_cr"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="hpme" />
     <item
-        android:id="@+id/bottom_action_notif"
+        android:id="@+id/bottom_item_notifi_cr"
         android:icon="@drawable/ic_menu_send"
         android:title="notification" />
     <item
-        android:id="@+id/bottom_action_account"
+        android:id="@+id/bottom_item_profile_cr"
         android:icon="@drawable/ic_supervisor_account_black_24dp"
         android:title="account" />
 </menu>
