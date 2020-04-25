@@ -2,23 +2,22 @@ package com.example.ussms.Model;
 
 public class classUser {
 
-    private  String CLASSROOM;
+    private String ClassName;
 
+    private classUser() {
+    }
 
-    private classUser(){
+    private classUser(String className) {
+        this.ClassName = ClassName;
 
     }
 
-    public classUser(String CLASSROOM) {
-        this.CLASSROOM = CLASSROOM;
+    public String getClassName() {
+        return ClassName;
     }
 
-    public String getCLASSROOM() {
-        return CLASSROOM;
-    }
-
-    public void setCLASSROOM(String CLASSROOM) {
-        this.CLASSROOM = CLASSROOM;
+    public void setClassName(String className) {
+        ClassName = className;
     }
 
 
