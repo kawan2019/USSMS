@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -23,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ussms.Abstracts.ItemClickListener;
-import com.example.ussms.Model.Users;
+import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.Model.classUser;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -38,7 +37,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -154,13 +152,15 @@ public class ClassR_t extends Fragment {
                 }
             }
         });
-        Query query = fsdb.collection("Users").document()
+        Query query = fsdb.collection("Users")
+                .document(mAuth.getCurrentUser().getDisplayName())
                 .collection("ClassRoom");
 
         //Recycleroption
 
 
         FirestoreRecyclerOptions<classUser> options = new FirestoreRecyclerOptions.Builder<classUser>()
+                .setLifecycleOwner(this)
                 .setQuery(query, classUser.class)
                 .build();
 
@@ -178,7 +178,10 @@ public class ClassR_t extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull  classUser u) {
 
-                holder.tv.setText(u.getClassName());
+                holder.mClassName.setText(u.getClassName());
+                holder.mOwnerClass.setText(u.getClassOwner());
+                CircleImageView userImage = holder.circleImageView;
+                Glide.with(getContext()).load(u.getIMAGE()).into(userImage);
 
             }
         };
@@ -206,32 +209,37 @@ public class ClassR_t extends Fragment {
                 });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }
 
     private void showMessage(String m){
         Toast.makeText(getContext(),m,Toast.LENGTH_LONG).show();
     }
 
 
-    private class UsersViewHolder extends RecyclerView.ViewHolder {
+    private class UsersViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView tv;
+        private TextView mClassName;
+        private TextView mOwnerClass;
+        private CircleImageView circleImageView;
+        Fragment home = new classRoom_Main_t();
 
 
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tv = itemView.findViewById(R.id.name_class);
+
+            circleImageView = itemView.findViewById(R.id.user_image);
+            mClassName = itemView.findViewById(R.id.name_class);
+            mOwnerClass = itemView.findViewById(R.id.name_techer);
+
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            MainActivity m = (MainActivity) getActivity();
+            m.g(home);
 
 
         }

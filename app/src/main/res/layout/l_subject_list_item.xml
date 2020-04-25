@@ -5,24 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/image_techer"
-        android:layout_width="138dp"
-        android:layout_height="122dp"
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="9dp"
-        app:srcCompat="@drawable/all_set" />
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="53dp"
+        android:layout_marginBottom="15dp"
+        android:background="@mipmap/profile_placeholder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/name_techer"
         android:layout_width="120dp"
         android:layout_height="48dp"
-        android:layout_below="@+id/image_techer"
+        android:layout_below="@+id/user_image"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="21dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         android:padding="10dp"
         android:text="Loding"
         android:textSize="20sp" />
@@ -33,7 +38,8 @@
         android:layout_height="53dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="14dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="27dp"
         android:fontFamily="sans-serif"
         android:padding="10dp"
         android:text="Lodig name subject"

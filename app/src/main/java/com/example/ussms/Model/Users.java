@@ -5,16 +5,20 @@ public class Users  {
     private String UID;
     private String FULLNAME;
     private String IMAGE;
+    private String ClassName;
+    private  String ClassOwner;
 
 
 
     private Users(){
     }
-    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE){
+    private Users(String USERNAME,String UID,String FULLNAME,String IMAGE,String ClassName , String ClassOwner){
         this.USERNAME = USERNAME;
         this.UID = UID;
         this.FULLNAME = FULLNAME;
         this.IMAGE = IMAGE;
+        this.ClassName = ClassName;
+        this.ClassOwner = ClassOwner;
 
 
 
@@ -50,6 +54,25 @@ public class Users  {
 
     public void setFULLNAME(String FULLNAME) {
         this.FULLNAME = FULLNAME;
+    }
+
+
+
+
+    public String getClassName() {
+        return ClassName;
+    }
+
+    public void setClassName(String className) {
+        ClassName = className;
+    }
+
+    public String getClassOwner() {
+        return ClassOwner;
+    }
+
+    public void setClassOwner(String classOwner) {
+        ClassOwner = classOwner;
     }
 
 
