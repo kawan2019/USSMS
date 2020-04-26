@@ -16,7 +16,7 @@
         android:layout_marginTop="27dp"
         android:layout_marginEnd="53dp"
         android:layout_marginBottom="15dp"
-        android:background="@mipmap/profile_placeholder"
+        android:src="@mipmap/profile_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

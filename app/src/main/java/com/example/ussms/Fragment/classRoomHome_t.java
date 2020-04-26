@@ -71,7 +71,7 @@ public class classRoomHome_t extends Fragment {
             protected void onBindViewHolder(@NonNull final classRoomHome_t.UsersViewHolder holder, int i, @NonNull  Users u) {
 
                 holder.mblogusername.setText(u.getUSERNAME());
-                holder.mDescription.setText(u.getUID());
+                holder.mDescription.setText(u.getFULLNAME());
 
 
 

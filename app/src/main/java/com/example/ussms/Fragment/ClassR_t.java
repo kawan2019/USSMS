@@ -135,6 +135,7 @@ public class ClassR_t extends Fragment {
                     hello.put("ClassName", Nclass);
                     hello.put("CreateTime", FieldValue.serverTimestamp());
                     hello.put("ClassLevel", level_);
+                    hello.put("PhotoUser",mAuth.getCurrentUser().getPhotoUrl()+toString());
                     hello.put("ClassDepartment",department);
                     hello.put("ClassMembersNumber",j);
                     fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
@@ -181,7 +182,7 @@ public class ClassR_t extends Fragment {
                 holder.mClassName.setText(u.getClassName());
                 holder.mOwnerClass.setText(u.getClassOwner());
                 CircleImageView userImage = holder.circleImageView;
-                Glide.with(getContext()).load(u.getIMAGE()).into(userImage);
+                Glide.with(getContext()).load(u.getPhotoUser()).into(userImage);
 
             }
         };
