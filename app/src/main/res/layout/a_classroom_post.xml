@@ -1,92 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-   >
-
-
-    <EditText
-        android:id="@+id/titlefild"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_margin="10dp"
-
-        android:ems="10"
-        android:hint="Title post ......."
-        android:inputType="textPersonName"
-        android:padding="10dp"
-        android:singleLine="true"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.473"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageselect"
-        app:layout_constraintVertical_bias="0.147" />
-
-    <EditText
-        android:id="@+id/desFild"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="150dp"
-        android:layout_marginRight="10dp"
-
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="post Descreption ...."
-        android:inputType="textMultiLine"
-        android:padding="10dp"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.473"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageselect"
-        app:layout_constraintVertical_bias="0.059" />
+    >
 
     <Button
         android:id="@+id/img"
-        android:layout_width="411dp"
-        android:layout_height="73dp"
-
-        android:layout_marginTop="136dp"
-
-
-        android:text="Submit post"
-        android:textColor="#FFFFFF"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/desFild"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <ImageButton
-        android:id="@+id/imageselect"
-        android:layout_width="0dp"
-        android:layout_height="220dp"
-        android:adjustViewBounds="true"
-        android:background="#00FEFEFE"
-        android:padding="10dp"
-        android:scaleType="centerCrop"
-        app:srcCompat="@mipmap/image_placeholder"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.031" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
+        android:layout_width="match_parent"
+        android:layout_height="83dp"
+        android:layout_margin="30dp"
+        android:text="select imge galary" />
+</LinearLayout>

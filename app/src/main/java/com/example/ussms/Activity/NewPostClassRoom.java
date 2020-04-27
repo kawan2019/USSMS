@@ -1,28 +1,22 @@
 package com.example.ussms.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.Gallery;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.ussms.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -30,14 +24,16 @@ import com.google.firebase.storage.UploadTask;
 public class NewPostClassRoom extends AppCompatActivity {
 
 
-
-    private Button mselectImagee;
+    private Button mselectImage;
 
     private StorageReference mStotage;
 
     private static final int GALLERY_INTENT=2;
 
     private ProgressDialog mprogressDialog;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +42,11 @@ public class NewPostClassRoom extends AppCompatActivity {
 
         mStotage= FirebaseStorage.getInstance().getReference();
 
-        mselectImagee=findViewById(R.id.img);
+        mselectImage=findViewById(R.id.img);
 
         mprogressDialog=new ProgressDialog(this);
 
-        mselectImagee.setOnClickListener(new View.OnClickListener() {
+        mselectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -98,22 +94,13 @@ public class NewPostClassRoom extends AppCompatActivity {
                     mprogressDialog.dismiss();
                 }
 
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(NewPostClassRoom.this,"Error :  "+e.getMessage(),Toast.LENGTH_LONG).show();
+
+                }
             });
         }
     }
-
-
-
-//            if (data.getClipData() != null){
-//
-//
-//                Toast.makeText(NewPostClassRoom.this, "select multiolie file", Toast.LENGTH_SHORT).show();
-//            }else if (data.getData() != null){
-//
-//
-//                Toast.makeText(NewPostClassRoom.this, "Select single file", Toast.LENGTH_SHORT).show();
-//            }
-
-
-
 }
