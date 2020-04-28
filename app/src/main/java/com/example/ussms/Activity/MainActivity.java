@@ -31,6 +31,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.bumptech.glide.Glide;
 import com.example.ussms.Fragment.Friends;
 import com.example.ussms.Fragment.HomeFragment;
+import com.example.ussms.Fragment.classRoom_Main_t;
 import com.example.ussms.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private TextView tv_username_heder_nav,tv_email_heder_nav;
     CircleImageView cig_heder_nav;
+    classRoom_Main_t classRoomMainT;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth;
 
@@ -247,6 +249,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
 
 }

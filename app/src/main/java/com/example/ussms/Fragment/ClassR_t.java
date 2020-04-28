@@ -1,6 +1,6 @@
 package com.example.ussms.Fragment;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.ussms.Abstracts.ItemClickListener;
 import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.Model.classUser;
 import com.example.ussms.R;
@@ -43,6 +42,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,7 +84,6 @@ public class ClassR_t extends Fragment {
 
     public ClassR_t() {
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -95,6 +95,8 @@ public class ClassR_t extends Fragment {
         mLevelClass = view.findViewById(R.id.level_class);
         mAuth = FirebaseAuth.getInstance();
         reload();
+
+
 
         ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, Level);
         adp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -193,21 +195,20 @@ public class ClassR_t extends Fragment {
             protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull final classUser u) {
 
                 holder.mClassName.setText(u.getClassName());
-
                 holder.mOwnerClass.setText(u.getClassOwner());
                 CircleImageView userImage = holder.circleImageView;
                 Glide.with(getContext()).load(u.getPhotoUser()).into(userImage);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-               holder.itemView.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View view) {
-                        setCln(u.getClassOwner());
-
-                       MainActivity m = (MainActivity) getActivity();
-                       m.g(home);
-
-                   }
-               });
+                        SharedPreferences.Editor editor = getActivity().getSharedPreferences("Class", MODE_PRIVATE).edit();
+                        editor.putString("CN", u.getClassName());
+                        editor.apply();
+                        MainActivity m = (MainActivity) getActivity();
+                        m.g(home);
+                    }
+                });
 
             }
         };
@@ -250,6 +251,7 @@ public class ClassR_t extends Fragment {
         private CircleImageView circleImageView;
 
 
+
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -258,10 +260,11 @@ public class ClassR_t extends Fragment {
             mClassName = itemView.findViewById(R.id.name_class);
             mOwnerClass = itemView.findViewById(R.id.name_techer);
 
-
         }
 
 
     }
+
+
 
 }
