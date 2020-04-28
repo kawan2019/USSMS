@@ -1,11 +1,13 @@
 package com.example.ussms.Fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,12 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.ussms.Activity.NewPostClassRoom;
+import com.example.ussms.Activity.News;
 import com.example.ussms.Model.Users;
 import com.example.ussms.Model.classUser;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -38,6 +43,7 @@ public class classRoom_Main_t extends Fragment {
     private classRoomHome_t homeFragment;
     private classRoomNotification_t notificationFragment;
     private classRoomAcount_t accountFragment;
+    private FloatingActionButton addPostBtn;
 
 
     public classRoom_Main_t() {}
@@ -50,6 +56,18 @@ public class classRoom_Main_t extends Fragment {
         homeFragment = new classRoomHome_t();
         notificationFragment = new classRoomNotification_t();
         accountFragment = new classRoomAcount_t();
+
+        addPostBtn = view.findViewById(R.id.add_post_btn);
+        addPostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent newPostIntent = new Intent(getContext(), NewPostClassRoom.class);
+                startActivity(newPostIntent);
+
+            }
+        });
+
 
         initializeFragment();
         mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
