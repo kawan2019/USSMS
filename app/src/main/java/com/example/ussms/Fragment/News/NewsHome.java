@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -63,9 +64,14 @@ public class NewsHome extends Fragment {
     private void toggleFilters(){
         if(sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            float deg = filterIcon.getRotation() + 180F;
+            filterIcon.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
+
         }
         else {
             sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            float deg = filterIcon.getRotation() - 180F;
+            filterIcon.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
         }
     }
 }

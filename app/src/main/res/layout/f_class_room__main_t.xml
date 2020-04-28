@@ -20,8 +20,7 @@
             android:focusable="true"
             app:layout_constraintBottom_toTopOf="@+id/mainBottomNav"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@mipmap/action_add" />
-
+            app:srcCompat="@drawable/baseline_add_circle_outline_black_18dp" />
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/mainBottomNav"
             android:layout_width="match_parent"
