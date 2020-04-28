@@ -8,31 +8,44 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Gallery;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.ussms.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class NewPostClassRoom extends AppCompatActivity {
 
 
-    private Button mselectImage;
+    private ImageButton mselectImage;
+    private EditText mpostDesc;
+    private Button msubmit;
 
-    private StorageReference mStotage;
+    private Uri mImageUri;
+    private  static final int RESULT_LOAD_IMAGE =2;
+    private StorageReference mStorage;
+    private ProgressDialog mprogress;
+    private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth =FirebaseAuth.getInstance();;
 
-    private static final int GALLERY_INTENT=2;
-
-    private ProgressDialog mprogressDialog;
-
-
+    String department =null;
+    int level_;
 
 
     @Override
@@ -40,67 +53,109 @@ public class NewPostClassRoom extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_classroom_post);
 
-        mStotage= FirebaseStorage.getInstance().getReference();
+        mStorage = FirebaseStorage.getInstance().getReference();
 
-        mselectImage=findViewById(R.id.img);
+        mselectImage = findViewById(R.id.imageselect);
+        mpostDesc = findViewById(R.id.desFild);
+        msubmit = findViewById(R.id.submit);
 
-        mprogressDialog=new ProgressDialog(this);
+        mprogress = new ProgressDialog(this);
 
         mselectImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-//                Intent intent=new Intent(Intent.ACTION_PICK);
-//
-//                intent.setType("image/*");
-//
-//                startActivityForResult(intent,GALLERY_INTENT);
-
-
+            public void onClick(View v) {
 
                 Intent intent = new Intent();
                 intent.setType("*/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select Picture"), GALLERY_INTENT);
-
+                startActivityForResult(Intent.createChooser(intent,"Select Picture"), RESULT_LOAD_IMAGE);
 
 
             }
         });
 
+
+
+        msubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                startPosting();
+
+            }
+        });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void startPosting() {
 
-        if (requestCode ==GALLERY_INTENT && resultCode ==RESULT_OK){
+        mprogress.setMessage("uploding .....");
+        mprogress.show();
 
-            mprogressDialog.setMessage("UPlod..");
-            mprogressDialog.show();
 
-            Uri uri=data.getData();
+        final String desc = mpostDesc.getText().toString();
 
-            StorageReference filepath=mStotage.child("Photo").child(uri.getLastPathSegment());
+        fsdb.collection("Users").whereEqualTo("DEPARTMENT",department)
+                .whereEqualTo("LEVEL", level_)
+                .get();
 
-            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
+
+        if (!TextUtils.isEmpty(desc) && mImageUri != null) {
+
+            final StorageReference filepath = mStorage.child("file/").child(mImageUri.getLastPathSegment());
+
+            filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    Toast.makeText(NewPostClassRoom.this,"Uplode Done ",Toast.LENGTH_LONG).show();
+                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri url) {
+                            String downloadUri = url.toString();
 
-                    mprogressDialog.dismiss();
+                            Map<String, Object> f = new HashMap<>();
+                            f.put("FileOwner", mAuth.getCurrentUser().getDisplayName());
+                            f.put("File", downloadUri);
+                            f.put("CreateTime", FieldValue.serverTimestamp());
+                            f.put("FDescription", desc);
+                            f.put("PhotoUser", mAuth.getCurrentUser().getPhotoUrl() + toString());
+                            f.put("FDepartment", mAuth.getCurrentUser().getEmail());
+                            f.put("FLevel", level_);
+
+                            fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
+                                    .collection("ClassRoom").document().collection("FILE").document().set(f);
+
+
+                            mprogress.dismiss();
+
+                        }
+                    });
                 }
-
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(NewPostClassRoom.this,"Error :  "+e.getMessage(),Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(NewPostClassRoom.this, "error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode ==RESULT_LOAD_IMAGE && resultCode ==RESULT_OK){
+
+            mImageUri=data.getData();
+            mselectImage.setImageURI(mImageUri);
+
+        }
+
+    }
+
+
+
+
+
+
 }
