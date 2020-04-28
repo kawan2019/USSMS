@@ -3,13 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FF5722"
     tools:context=".Fragment.News.NewsProfile">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.eyebrows.video.EyebrowsVideoView
+        android:id="@+id/card_item_videoView"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:padding="10dp" />
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="200dp" />
 
 </FrameLayout>

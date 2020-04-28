@@ -10,8 +10,10 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.bumptech.glide.Glide;
 import com.example.ussms.Fragment.Friends;
 import com.example.ussms.Fragment.HomeFragment;
 import com.example.ussms.R;
@@ -40,6 +43,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawer;
     private ImageButton igb_classroom;
     private AppBarConfiguration mAppBarConfiguration;
+    private TextView tv_username_heder_nav,tv_email_heder_nav;
+    CircleImageView cig_heder_nav;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth;
 
@@ -63,12 +69,30 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+
+
+
+
+
+
+
+
         Log.d("TOKENGG", FirebaseInstanceId.getInstance().getToken());
          toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
          drawer = findViewById(R.id.drawer_layout);
         final NavigationView navigationView = findViewById(R.id.nav_view);
+        View hView =  navigationView.getHeaderView(0);
+
+        tv_email_heder_nav = hView.findViewById(R.id.email_header_nav);
+        tv_username_heder_nav = hView.findViewById(R.id.username_header_nav);
+        cig_heder_nav = hView.findViewById(R.id.cig_heder_nav);
+
+        tv_email_heder_nav.setText(mAuth.getCurrentUser().getEmail()+"");
+        tv_username_heder_nav.setText(mAuth.getCurrentUser().getDisplayName());
+        Glide.with(getApplicationContext()).load(mAuth.getCurrentUser().getPhotoUrl()).into(cig_heder_nav);
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_logout, R.id.nav_ch,R.id.nav_friend,R.id.nav_reset,R.id.nav_share,R.id.nav_send,R.id.nav_setting)
                 .setDrawerLayout(drawer)

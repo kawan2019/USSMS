@@ -1,21 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#9C27B0"
-    tools:context=".Fragment.News.NewsHome">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-    <com.eyebrows.video.EyebrowsVideoView
-        android:id="@+id/card_item_videoView"
+        android:orientation="vertical"
+        android:background="#000000">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/backIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:background="#00FFFFFF"
+                android:src="@drawable/ic_arrow_back_black_24dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="HOME"
+                    android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:textSize="22dp"/>
+            <ImageButton
+                android:id="@+id/filterIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:layout_marginRight="25dp"
+                android:src="@drawable/ic_filter_list_white_24dp"
+                android:layout_alignParentRight="true" />
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+        <HorizontalScrollView
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textColor="#000000"
+            app:chipStrokeColor="#2196F3"
+            app:chipStrokeWidth="1dp"
+            android:text="Computer 💻"/>
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                app:chipStrokeColor="#2196F3"
+                android:padding="5dp"
+                app:chipStrokeWidth="1dp"
+                android:text="Law 👩‍⚖️"/>
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                app:chipStrokeColor="#2196F3"
+                android:padding="5dp"
+                app:chipStrokeWidth="1dp"
+                android:text="Physic 👨🏻‍🔬"/>
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                app:chipStrokeColor="#2196F3"
+                android:padding="5dp"
+                app:chipStrokeWidth="1dp"
+                android:text="English 🧑‍🏫"/>
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:padding="5dp"
+                app:chipStrokeColor="#2196F3"
+                app:chipStrokeWidth="1dp"
+                android:text="Arabic 👩‍🏫"/>
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:padding="5dp"
+                    app:chipStrokeColor="#2196F3"
+                    app:chipStrokeWidth="1dp"
+                    android:text="Engineering 👷‍♀️"/>
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:padding="5dp"
+                    app:chipStrokeColor="#2196F3"
+                    app:chipStrokeWidth="1dp"
+                    android:text="Social 🐫"/>
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:padding="5dp"
+                    app:chipStrokeColor="#2196F3"
+                    app:chipStrokeWidth="1dp"
+                    android:text="Islamic👳🏼‍♂️"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+    <LinearLayout
+        android:paddingTop="70dp"
+        android:id="@+id/contentLayout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:scaleType="center_crop"/>
-
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="@drawable/bg_head_news_home"
+            android:padding="10dp"
+            android:layout_marginBottom="-8dp"
+            android:elevation="4dp">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="7dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/ic_menu_send"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swiperefresh"
+            android:clickable="true"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#2196F3">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#fff"/>
+            </LinearLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
