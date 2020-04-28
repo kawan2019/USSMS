@@ -7,7 +7,8 @@
     android:background="@drawable/gra_white"
     android:orientation="horizontal">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/cig_heder_nav"
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_marginLeft="15dp"
@@ -22,6 +23,7 @@
         android:orientation="vertical">
 
         <com.pixplicity.fontview.FontAppCompatTextView
+            android:id="@+id/username_header_nav"
             style="@style/FontTextViewStyle"
             android:layout_width="wrap_content"
             android:textSize="14dp"
@@ -30,6 +32,7 @@
             android:text="E-Learning" />
 
         <com.pixplicity.fontview.FontAppCompatTextView
+            android:id="@+id/email_header_nav"
             style="@style/FontTextViewStyle"
             android:layout_width="wrap_content"
             android:layout_marginTop="4dp"
