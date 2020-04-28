@@ -1,98 +1,93 @@
 package com.example.ussms.Activity;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
+import com.example.ussms.Adapter.PageAdapter;
 import com.example.ussms.Fragment.News.NewsAddPost;
 import com.example.ussms.Fragment.News.NewsHome;
 import com.example.ussms.Fragment.News.NewsNotification;
 import com.example.ussms.Fragment.News.NewsProfile;
 import com.example.ussms.R;
+import com.eyebrows.video.EyebrowsVideoView;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
 
 public class News extends AppCompatActivity {
     private BottomNavigationView mainbottomNav;
     private NewsHome homeFragment;
     private NewsNotification notificationFragment;
     private NewsProfile accountFragment;
+    EyebrowsVideoView videoView;
     private NewsAddPost addPostFragment;
+    private PageAdapter adapter;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    TabItem tabNews;
+    TabItem tabAdd;
+    TabItem tabNotifi;
+    TabItem tabAccount;
+    BadgeDrawable badge;
+    PageAdapter pageAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_news);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+
+        tabLayout.addTab(tabLayout.newTab().setIcon(getResources().getDrawable(R.drawable.ic_home_black_24dp)));
+        tabLayout.addTab(tabLayout.newTab().setIcon(getResources().getDrawable(R.drawable.ic_search_blac_24dp)));
+        tabLayout.addTab(tabLayout.newTab().setIcon(getResources().getDrawable(R.drawable.baseline_add_circle_outline_black_18dp)));
+        tabLayout.addTab(tabLayout.newTab().setIcon(getResources().getDrawable(R.drawable.baseline_notification_important_black_18dp)));
+        tabLayout.addTab(tabLayout.newTab().setIcon(getResources().getDrawable(R.drawable.baseline_person_black_18dp)));
+        badge = tabLayout.getTabAt(3).getOrCreateBadge();
+        badge.setVisible(true);
+        badge.setNumber(99);
 
 
-        mainbottomNav = findViewById(R.id.bottom_navigation);
+        pageAdapter = new PageAdapter(getSupportFragmentManager(),5);
+        viewPager.setAdapter(pageAdapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        homeFragment = new NewsHome();
-        notificationFragment = new NewsNotification();
-        accountFragment = new NewsProfile();
-        addPostFragment = new NewsAddPost();
-
-        initializeFragment();
-        mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-                switch (item.getItemId()) {
-                    case R.id.bottom_item_home_news:
-                        replaceFragment(homeFragment, currentFragment);
-                        return true;
-                    case R.id.bottom_item_add_news:
-                        replaceFragment(addPostFragment, currentFragment);
-                        return true;
-                    case R.id.bottom_item_notifi_news:
-                        replaceFragment(notificationFragment, currentFragment);
-                        return true;
-                    case R.id.bottom_item_profile_news:
-                        replaceFragment(accountFragment, currentFragment);
-                        return true;
-                    default:
-                        return false;
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+                if (tab.getPosition() == 0) {
+
+                }else if (tab.getPosition() == 1) {
+
+                }else if (tab.getPosition() == 2) {
+
+                } else if (tab.getPosition() == 3) {
+                    badge.setVisible(false);
+                }else if (tab.getPosition() == 4) {
+
+                }else {
                 }
             }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) { }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
         });
+
+
+
     }
-    private void initializeFragment(){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.frame_a_news, homeFragment);
-        fragmentTransaction.add(R.id.frame_a_news, notificationFragment);
-        fragmentTransaction.add(R.id.frame_a_news, accountFragment);
-        fragmentTransaction.add(R.id.frame_a_news, addPostFragment);
-        fragmentTransaction.hide(notificationFragment);
-        fragmentTransaction.hide(accountFragment);
-        fragmentTransaction.hide(addPostFragment);
-        fragmentTransaction.commit();
-    }
-    private void replaceFragment(Fragment fragment, Fragment currentFragment){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if(fragment == homeFragment){
-            fragmentTransaction.hide(accountFragment);
-            fragmentTransaction.hide(notificationFragment);
-            fragmentTransaction.hide(addPostFragment);
-        }
-        if(fragment == accountFragment){
-            fragmentTransaction.hide(homeFragment);
-            fragmentTransaction.hide(notificationFragment);
-            fragmentTransaction.hide(addPostFragment);
-        }
-        if(fragment == notificationFragment){
-            fragmentTransaction.hide(homeFragment);
-            fragmentTransaction.hide(accountFragment);
-            fragmentTransaction.hide(addPostFragment);
-        }
-        if(fragment == addPostFragment){
-            fragmentTransaction.hide(homeFragment);
-            fragmentTransaction.hide(accountFragment);
-            fragmentTransaction.hide(notificationFragment);
-        }
-        fragmentTransaction.show(fragment);
-        fragmentTransaction.commit();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
+

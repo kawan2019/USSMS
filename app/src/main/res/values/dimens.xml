@@ -10,5 +10,16 @@
     <dimen name="floating_height">650dp</dimen>
     <dimen name="floating_width">500dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="sneek_height">150dp</dimen>
+
+    <dimen name="toolbar__height">56dp</dimen>
+    <dimen name="toolbar_icon__width">56dp</dimen>
+    <dimen name="toolbar_icon__marginEnd">4dp</dimen>
+    <dimen name="front_layer_background__radius">16dp</dimen>
+
+    <dimen name="list_item__height_dense">48dp</dimen>
+    <dimen name="list_item__horizontal_padding">16dp</dimen>
+    <dimen name="list_item__vertical_padding">12dp</dimen>
+    <dimen name="list_item_icon__horizontal_padding">32dp</dimen>
 
 </resources>

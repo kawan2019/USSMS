@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
     implementation 'com.github.GrenderG:Toasty:1.4.2'
     implementation 'com.github.kawan2019:aaa:1.0'
+    implementation 'io.github.rokarpov:backdrop:0.3'
 
 
 }
