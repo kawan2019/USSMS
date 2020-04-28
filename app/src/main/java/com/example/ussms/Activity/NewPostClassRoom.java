@@ -54,29 +54,21 @@ public class NewPostClassRoom extends AppCompatActivity {
         setContentView(R.layout.a_classroom_post);
 
         mStorage = FirebaseStorage.getInstance().getReference();
-
         mselectImage = findViewById(R.id.imageselect);
         mpostDesc = findViewById(R.id.desFild);
         msubmit = findViewById(R.id.submit);
-
         mprogress = new ProgressDialog(this);
-
         mselectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent();
                 intent.setType("*/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent,"Select Picture"), RESULT_LOAD_IMAGE);
 
-
             }
         });
-
-
-
         msubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,9 +88,9 @@ public class NewPostClassRoom extends AppCompatActivity {
 
         final String desc = mpostDesc.getText().toString();
 
-        fsdb.collection("Users").whereEqualTo("DEPARTMENT",department)
-                .whereEqualTo("LEVEL", level_)
-                .get();
+//        fsdb.collection("Users").whereEqualTo("DEPARTMENT",department)
+//                .whereEqualTo("LEVEL", level_)
+//                .get();
 
 
 

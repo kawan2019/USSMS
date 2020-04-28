@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,6 +44,7 @@ public class classRoom_Main_t extends Fragment {
     private classRoomHome_t homeFragment;
     private classRoomNotification_t notificationFragment;
     private classRoomAcount_t accountFragment;
+    private ClassR_t class_r;
     private FloatingActionButton addPostBtn;
 
 
@@ -53,9 +55,17 @@ public class classRoom_Main_t extends Fragment {
 
         mainbottomNav = view.findViewById(R.id.mainBottomNav);
 
+
+
+
         homeFragment = new classRoomHome_t();
+        class_r = new ClassR_t();
         notificationFragment = new classRoomNotification_t();
         accountFragment = new classRoomAcount_t();
+
+        String a =class_r.getCln();
+
+        Toasty.success(getContext(),a,Toasty.LENGTH_LONG).show();
 
         addPostBtn = view.findViewById(R.id.add_post_btn);
         addPostBtn.setOnClickListener(new View.OnClickListener() {

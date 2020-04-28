@@ -4,16 +4,9 @@ public class classUser {
 
     private String ClassName;
     private  String ClassOwner;
-
-
     private  String PhotoUser;
-
-
-
-
     private classUser() {
     }
-
     private classUser(String className, String ClassOwner,String PhotoUser ) {
         this.ClassName = ClassName;
         this.ClassOwner = ClassOwner;

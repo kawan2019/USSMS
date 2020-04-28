@@ -1,5 +1,6 @@
 package com.example.ussms.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -66,7 +67,19 @@ public class ClassR_t extends Fragment {
     int level_;
     int j =0;
     int e;
+    public String a;
     String Nclass;
+    Fragment home = new classRoom_Main_t();
+
+    public String getCln() {
+        return cln;
+    }
+
+    public void setCln(String cln) {
+        this.cln = cln;
+    }
+
+    private String cln;
 
     public ClassR_t() {
     }
@@ -177,12 +190,24 @@ public class ClassR_t extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull  classUser u) {
+            protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull final classUser u) {
 
                 holder.mClassName.setText(u.getClassName());
+
                 holder.mOwnerClass.setText(u.getClassOwner());
                 CircleImageView userImage = holder.circleImageView;
                 Glide.with(getContext()).load(u.getPhotoUser()).into(userImage);
+
+               holder.itemView.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                        setCln(u.getClassOwner());
+
+                       MainActivity m = (MainActivity) getActivity();
+                       m.g(home);
+
+                   }
+               });
 
             }
         };
@@ -194,6 +219,8 @@ public class ClassR_t extends Fragment {
         return view;
 
     }
+
+
 
     private void reload() {
         fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).get()
@@ -216,12 +243,11 @@ public class ClassR_t extends Fragment {
     }
 
 
-    private class UsersViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class UsersViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mClassName;
         private TextView mOwnerClass;
         private CircleImageView circleImageView;
-        Fragment home = new classRoom_Main_t();
 
 
         public UsersViewHolder(@NonNull View itemView) {
@@ -232,17 +258,10 @@ public class ClassR_t extends Fragment {
             mClassName = itemView.findViewById(R.id.name_class);
             mOwnerClass = itemView.findViewById(R.id.name_techer);
 
-            itemView.setOnClickListener(this);
 
         }
 
-        @Override
-        public void onClick(View v) {
 
-            MainActivity m = (MainActivity) getActivity();
-            m.g(home);
-
-
-        }
     }
+
 }
