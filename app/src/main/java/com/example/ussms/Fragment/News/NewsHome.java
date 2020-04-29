@@ -1,6 +1,7 @@
 package com.example.ussms.Fragment.News;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.R;
 import com.eyebrows.video.EyebrowsVideoView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -19,10 +21,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewsHome extends Fragment {
+public class NewsHome extends Fragment implements View.OnClickListener {
 
     private CoordinatorLayout coordinatorLayout;
     ImageButton filterIcon;
+    ImageButton backIcon;
     private BottomSheetBehavior<LinearLayout> sheetBehavior;
 
     public NewsHome() {
@@ -43,6 +46,7 @@ public class NewsHome extends Fragment {
         }
 
         filterIcon = coordinatorLayout.findViewById(R.id.filterIcon);
+        coordinatorLayout.findViewById(R.id.backIcon).setOnClickListener(this);
         LinearLayout contentLayout = coordinatorLayout.findViewById(R.id.contentLayout);
 
         sheetBehavior = BottomSheetBehavior.from(contentLayout);
@@ -72,6 +76,13 @@ public class NewsHome extends Fragment {
             sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             float deg = filterIcon.getRotation() - 180F;
             filterIcon.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId()==R.id.backIcon){
+            startActivity(new Intent(getContext(), MainActivity.class));
         }
     }
 }
