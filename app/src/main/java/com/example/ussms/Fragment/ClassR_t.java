@@ -53,12 +53,9 @@ public class ClassR_t extends Fragment {
     private RecyclerView mClassList;
     private Spinner mLevelClass;
     private EditText mNameClass;
-
     private ImageView mImageTecher;
     private Button mClassBtn;
-
     private FirestoreRecyclerAdapter adapter;
-
     private boolean validateLevSp = true;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
@@ -198,12 +195,16 @@ public class ClassR_t extends Fragment {
                 holder.mOwnerClass.setText(u.getClassOwner());
                 CircleImageView userImage = holder.circleImageView;
                 Glide.with(getContext()).load(u.getPhotoUser()).into(userImage);
+
+
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         SharedPreferences.Editor editor = getActivity().getSharedPreferences("Class", MODE_PRIVATE).edit();
                         editor.putString("CN", u.getClassName());
+                        editor.putString("CD", u.getClassDepartment());
+                        editor.putLong("CL", u.getClassLevel());
                         editor.apply();
                         MainActivity m = (MainActivity) getActivity();
                         m.g(home);

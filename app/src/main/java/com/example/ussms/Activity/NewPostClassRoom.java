@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,11 +21,15 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.ussms.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -44,10 +51,6 @@ public class NewPostClassRoom extends AppCompatActivity {
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth =FirebaseAuth.getInstance();;
 
-    String department =null;
-    int level_;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,9 @@ public class NewPostClassRoom extends AppCompatActivity {
         mpostDesc = findViewById(R.id.desFild);
         msubmit = findViewById(R.id.submit);
         mprogress = new ProgressDialog(this);
+
+
+
         mselectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,14 +91,7 @@ public class NewPostClassRoom extends AppCompatActivity {
         mprogress.setMessage("uploding .....");
         mprogress.show();
 
-
         final String desc = mpostDesc.getText().toString();
-
-//        fsdb.collection("Users").whereEqualTo("DEPARTMENT",department)
-//                .whereEqualTo("LEVEL", level_)
-//                .get();
-
-
 
         if (!TextUtils.isEmpty(desc) && mImageUri != null) {
 
@@ -105,6 +104,12 @@ public class NewPostClassRoom extends AppCompatActivity {
                     filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri url) {
+
+                            SharedPreferences pref = getSharedPreferences("Class", Activity.MODE_PRIVATE);
+                            String cn = pref.getString("CN","");
+                            String cd = pref.getString("CD","");
+                            Long cl = pref.getLong("CL",0);
+
                             String downloadUri = url.toString();
 
                             Map<String, Object> f = new HashMap<>();
@@ -113,11 +118,11 @@ public class NewPostClassRoom extends AppCompatActivity {
                             f.put("CreateTime", FieldValue.serverTimestamp());
                             f.put("FDescription", desc);
                             f.put("PhotoUser", mAuth.getCurrentUser().getPhotoUrl() + toString());
-                            f.put("FDepartment", mAuth.getCurrentUser().getEmail());
-                            f.put("FLevel", level_);
+                            f.put("FDepartment", cd);
+                            f.put("FLevel", cl);
 
                             fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
-                                    .collection("ClassRoom").document().collection("FILE").document().set(f);
+                                    .collection("ClassRoom").document(cn).collection("FILE").document(cn).set(f);
 
 
                             mprogress.dismiss();
@@ -132,6 +137,7 @@ public class NewPostClassRoom extends AppCompatActivity {
                 }
             });
         }
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
