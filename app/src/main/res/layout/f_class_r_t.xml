@@ -80,21 +80,18 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="623dp"
-        android:layout_marginTop="120dp">
+        android:layout_height="399dp"
+        android:layout_marginTop="155dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/class_list"
-            android:layout_width="283dp"
-            android:layout_height="291dp"
-            android:layout_marginTop="30dp"
+            android:layout_width="416dp"
+            android:layout_height="244dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.625"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.334" />
-
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

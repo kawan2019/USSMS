@@ -1,9 +1,6 @@
 package com.example.ussms.Model;
 
 public class ClassFile {
-
-
-
     private String FileOwner;
     private String File;
     private String CreateTime;
@@ -12,9 +9,7 @@ public class ClassFile {
     private String FDepartment;
     private long FLevel;
 
-    private ClassFile(){
-
-    }
+    private ClassFile(){ }
 
     private ClassFile(String fileOwner, String file, String createTime, String FDescription, String photoUser, String FDepartment, long FLevel) {
         this.FileOwner = fileOwner;

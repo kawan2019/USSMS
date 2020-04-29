@@ -222,8 +222,6 @@ public class ClassR_t extends Fragment {
 
     }
 
-
-
     private void reload() {
         fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -244,18 +242,14 @@ public class ClassR_t extends Fragment {
         Toast.makeText(getContext(),m,Toast.LENGTH_LONG).show();
     }
 
-
     private class UsersViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mClassName;
         private TextView mOwnerClass;
         private CircleImageView circleImageView;
 
-
-
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
-
 
             circleImageView = itemView.findViewById(R.id.user_image);
             mClassName = itemView.findViewById(R.id.name_class);
