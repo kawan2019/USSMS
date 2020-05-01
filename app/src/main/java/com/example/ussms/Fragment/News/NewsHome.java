@@ -25,14 +25,10 @@ public class NewsHome extends Fragment implements View.OnClickListener {
 
     private CoordinatorLayout coordinatorLayout;
     ImageButton filterIcon;
-    ImageButton backIcon;
     private BottomSheetBehavior<LinearLayout> sheetBehavior;
 
     public NewsHome() {
     }
-
-    EyebrowsVideoView videoView;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

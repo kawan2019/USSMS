@@ -1,5 +1,11 @@
-package com.example.ussms.Fragment;
+package com.example.ussms.Activity;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -7,22 +13,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.Model.classUser;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -30,6 +31,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -37,37 +39,35 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.tiper.MaterialSpinner;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static android.content.Context.MODE_PRIVATE;
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class ClassR_t extends Fragment {
+public class Class_t extends AppCompatActivity {
 
     private RecyclerView mClassList;
-    private Spinner mLevelClass;
+    private MaterialSpinner mLevelClass;
     private EditText mNameClass;
     private ImageView mImageTecher;
     private Button mClassBtn;
+    ImageButton mback,mAddClass;
+    private BottomSheetBehavior<LinearLayout> sheetBehavior;
     private FirestoreRecyclerAdapter adapter;
     private boolean validateLevSp = true;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
-    String department =null;
+    String department = null;
     Integer[] Level = {1, 2, 3, 4};
-     String [] su = new String[50];
+    String[] su = new String[50];
     int level_;
-    int j =0;
+    int j = 0;
     int e;
     public String a;
     String Nclass;
-    Fragment home = new classRoom_Main_t();
+//    Fragment home = new classRoom_Main_t();
 
     public String getCln() {
         return cln;
@@ -79,30 +79,57 @@ public class ClassR_t extends Fragment {
 
     private String cln;
 
-    public ClassR_t() {
-    }
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.a_class_t);
 
-        View view = inflater.inflate(R.layout.f_class_r_t, container, false);
-        mClassList = view.findViewById(R.id.class_list);
-        mClassBtn = view.findViewById(R.id.class_btn);
-        mNameClass = view.findViewById(R.id.edClass_name);
-        mLevelClass = view.findViewById(R.id.level_class);
+                mClassList = findViewById(R.id.class_list);
+        mClassBtn = findViewById(R.id.class_btn);
+        mNameClass = findViewById(R.id.edClass_name);
+        mLevelClass = findViewById(R.id.level_class);
+        mback=findViewById(R.id.backpost);
+        mAddClass = findViewById(R.id.addClass);
+        LinearLayout contentLayout = findViewById(R.id.contLayout);
+        sheetBehavior = BottomSheetBehavior.from(contentLayout);
+        sheetBehavior.setFitToContents(false);
+        sheetBehavior.setHideable(false);//prevents the boottom sheet from completely hiding off the screen
+        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);//initially state to fully expanded
         mAuth = FirebaseAuth.getInstance();
         reload();
 
+        mback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Class_t.this, MainActivity.class));
+            }
+        });
+        mAddClass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    float deg = mAddClass.getRotation() + 180F;
+                    mAddClass.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
+
+                }
+                else {
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    float deg = mAddClass.getRotation() - 180F;
+                    mAddClass.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
+                }
+
+            }
+        });
 
 
-        ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, Level);
+        ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, Level);
         adp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mLevelClass.setAdapter(adp2);
 
-        mLevelClass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mLevelClass.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
                 level_ = i + 1;
                 validateLevSp = false;
                 fsdb.collection("Users").whereEqualTo("DEPARTMENT",department)
@@ -115,8 +142,8 @@ public class ClassR_t extends Fragment {
 
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         Log.d("DOCC", document.getId());
-                                         su[j]=document.getId()+"";
-                                         j++;
+                                        su[j]=document.getId()+"";
+                                        j++;
                                     }
                                 } else {
                                     Log.d("DOCC", "Error getting documents: ", task.getException());
@@ -125,10 +152,11 @@ public class ClassR_t extends Fragment {
                         });
             }
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onNothingSelected(MaterialSpinner materialSpinner) {
                 validateLevSp = true;
             }
         });
+
 
         mClassBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,35 +207,36 @@ public class ClassR_t extends Fragment {
 
 
 
-        adapter = new FirestoreRecyclerAdapter<classUser, ClassR_t.UsersViewHolder>(options) {
+        adapter = new FirestoreRecyclerAdapter<classUser, Class_t.UsersViewHolder>(options) {
             @NonNull
             @Override
-            public ClassR_t.UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            public Class_t.UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View mview = LayoutInflater.from(parent.getContext()).inflate(R.layout.l_subject_list_item,parent,false);
 
-                return new ClassR_t.UsersViewHolder(mview);
+                return new UsersViewHolder(mview);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final ClassR_t.UsersViewHolder holder, int i, @NonNull final classUser u) {
+            protected void onBindViewHolder(@NonNull final Class_t.UsersViewHolder holder, int i, @NonNull final classUser u) {
 
                 holder.mClassName.setText(u.getClassName());
                 holder.mOwnerClass.setText(u.getClassOwner());
                 CircleImageView userImage = holder.circleImageView;
-                Glide.with(getContext()).load(u.getPhotoUser()).into(userImage);
+                Glide.with(Class_t.this).load(u.getPhotoUser()).into(userImage);
 
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        SharedPreferences.Editor editor = getActivity().getSharedPreferences("Class", MODE_PRIVATE).edit();
+                        SharedPreferences.Editor editor = getSharedPreferences("Class", MODE_PRIVATE).edit();
                         editor.putString("CN", u.getClassName());
                         editor.putString("CD", u.getClassDepartment());
                         editor.putLong("CL", u.getClassLevel());
                         editor.apply();
-                        MainActivity m = (MainActivity) getActivity();
-                        m.g(home);
+
+                        Intent newPostIntent = new Intent(Class_t.this, ClassRoom_main.class);
+                        startActivity(newPostIntent);
                     }
                 });
 
@@ -215,10 +244,9 @@ public class ClassR_t extends Fragment {
         };
 
         mClassList.setHasFixedSize(true);
-        mClassList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mClassList.setLayoutManager(new LinearLayoutManager(this));
         mClassList.setAdapter(adapter);
 
-        return view;
 
     }
 
@@ -231,7 +259,7 @@ public class ClassR_t extends Fragment {
                             DocumentSnapshot document = task.getResult();
                             department = (String) document.get("DEPARTMENT");
                         }else {
-                            Toast.makeText(getContext(),"Please Check internet Connection",Toast.LENGTH_LONG).show();
+                            Toast.makeText(Class_t.this,"Please Check internet Connection",Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -239,7 +267,7 @@ public class ClassR_t extends Fragment {
 
 
     private void showMessage(String m){
-        Toast.makeText(getContext(),m,Toast.LENGTH_LONG).show();
+        Toast.makeText(Class_t.this,m,Toast.LENGTH_LONG).show();
     }
 
     private class UsersViewHolder extends RecyclerView.ViewHolder {
@@ -259,7 +287,6 @@ public class ClassR_t extends Fragment {
 
 
     }
-
 
 
 }

@@ -1,7 +1,10 @@
 package com.example.ussms.Fragment;
 
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +35,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,16 +73,13 @@ public class classRoomHome_t extends Fragment {
 
         SharedPreferences pref = getActivity().getSharedPreferences("Class", Activity.MODE_PRIVATE);
         String cn = pref.getString("CN","");
-
-
-
+        if (cn != null)
+        Toast.makeText(getContext(),cn,Toast.LENGTH_LONG).show();
         Query query = fsdb.collection("Users")
-                .document(mAuth.getCurrentUser().getDisplayName())
-                .collection("ClassRoom").document(cn).collection("FILE");
+               .document(mAuth.getCurrentUser().getDisplayName())
+               .collection("ClassRoom").document(cn).collection("FILE");
 
         //Recycleroption
-
-
         FirestoreRecyclerOptions<ClassFile> options = new FirestoreRecyclerOptions.Builder<ClassFile>()
                 .setLifecycleOwner(this)
                 .setQuery(query, ClassFile.class)
@@ -88,13 +97,28 @@ public class classRoomHome_t extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final classRoomHome_t.UsersViewHolder holder, int i, @NonNull final ClassFile u) {
+            protected void onBindViewHolder(@NonNull final UsersViewHolder holder, int i, @NonNull final ClassFile u) {
 
-                holder.mClassName.setText(u.getFileOwner());
-                CircleImageView userImage = holder.circleImageView;
+                holder.mOwnerClass.setText(u.getFileOwner());
+
+
+                String date = (DateFormat.format("dd/MM/yyyy", new java.util.Date()).toString());
+                holder.mDate.setText(date);
+
+                holder.mDecription.setText(u.getFDescription());
+                CircleImageView userImage = holder.mCircleImageView;
                 Glide.with(getContext()).load(u.getPhotoUser()).into(userImage);
 
 
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                String url=u.getFile();
+                downloadFile(getActivity(),"Mobile", ".*",DIRECTORY_DOWNLOADS,url);
+
+                    }
+                });
 
             }
         };
@@ -105,9 +129,21 @@ public class classRoomHome_t extends Fragment {
 
         return view;
 
-    }
+   }
+
+   public void downloadFile(Context context, String fileName,String fileExtension, String destinationDirectory, String url ){
 
 
+    DownloadManager downloadManager =(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
+    Uri uri = Uri.parse(url);
+    DownloadManager.Request request = new DownloadManager.Request(uri);
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+//                request.setDestinationInExternalFilesDir(context,destinationDirectory, fileName + fileExtension);
+                File mydownload = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+ "/myFolder");
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                downloadManager.enqueue(request);
+}
 
     private void showMessage(String m){
         Toast.makeText(getContext(),m,Toast.LENGTH_LONG).show();
@@ -116,9 +152,9 @@ public class classRoomHome_t extends Fragment {
 
     private class UsersViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mClassName;
-        private TextView mOwnerClass;
-        private CircleImageView circleImageView;
+
+        private TextView mOwnerClass,mDate,mDecription;
+        private CircleImageView mCircleImageView;
 
 
 
@@ -126,15 +162,15 @@ public class classRoomHome_t extends Fragment {
             super(itemView);
 
 
-            circleImageView = itemView.findViewById(R.id.blog_user_image);
-            mClassName = itemView.findViewById(R.id.blog_user_name);
+            mCircleImageView = itemView.findViewById(R.id.blog_user_image);
+            mOwnerClass = itemView.findViewById(R.id.blog_user_name);
+            mDecription = itemView.findViewById(R.id.blog_desc);
+            mDate = itemView.findViewById(R.id.blog_date);
 
 
         }
 
 
-    }
-
-
+   }
 
 }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.ussms.Activity.Class_t;
 import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.Activity.News;
 import com.example.ussms.R;
@@ -36,7 +37,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
     FirebaseAuth mAuth;
-    Fragment classroom = new ClassR_t();
+//    Fragment classroom = new ClassR_t();
     FirestoreRecyclerAdapter adapter;
     private TextView tv;
     Handler handler = new Handler();
@@ -64,7 +65,9 @@ private String language;
         switch (view.getId()) {
             case R.id.igb120:
                Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
-                m.g(classroom);
+//                m.g(classroom);
+                startActivity(new Intent(getContext(), Class_t.class));
+
                 break;
             case R.id.igb2:
                 startActivity(new Intent(getContext(), News.class));

@@ -1,9 +1,11 @@
 package com.example.ussms.Model;
 
+import java.util.Date;
+
 public class ClassFile {
     private String FileOwner;
     private String File;
-    private String CreateTime;
+    private Date CreateTime;
     private String FDescription;
     private String PhotoUser;
     private String FDepartment;
@@ -11,14 +13,15 @@ public class ClassFile {
 
     private ClassFile(){ }
 
-    private ClassFile(String fileOwner, String file, String createTime, String FDescription, String photoUser, String FDepartment, long FLevel) {
+    private ClassFile(String fileOwner, String file, String FDescription,Date CreateTime, String photoUser, String FDepartment, long FLevel) {
         this.FileOwner = fileOwner;
         this.File = file;
-        this.CreateTime = createTime;
+
         this.FDescription = FDescription;
         this.PhotoUser = photoUser;
         this.FDepartment = FDepartment;
         this.FLevel = FLevel;
+        this.CreateTime =CreateTime;
     }
 
     public String getFileOwner() {
@@ -35,14 +38,6 @@ public class ClassFile {
 
     public void setFile(String file) {
         File = file;
-    }
-
-    public String getCreateTime() {
-        return CreateTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        CreateTime = createTime;
     }
 
     public String getFDescription() {
@@ -76,5 +71,14 @@ public class ClassFile {
     public void setFLevel(long FLevel) {
         this.FLevel = FLevel;
     }
+
+    public Date getCreateTime() {
+        return CreateTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        CreateTime = createTime;
+    }
+
 
 }

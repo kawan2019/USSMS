@@ -4,7 +4,7 @@
     <item
         android:id="@+id/bottom_item_home_cr"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="hpme" />
+        android:title="home" />
     <item
         android:id="@+id/bottom_item_notifi_cr"
         android:icon="@drawable/ic_menu_send"
