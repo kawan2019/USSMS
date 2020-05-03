@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageButton
-                    android:id="@+id/backpost"
+                    android:id="@+id/backhome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -168,7 +168,7 @@
                     android:orientation="vertical">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/class_list"
+                        android:id="@+id/class_list_s"
                         android:layout_width="match_parent"
                         android:layout_height="900dp"
                         android:background="#FFFFFF" />

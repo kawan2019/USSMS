@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.example.ussms.Activity.Class_t;
 import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.Activity.News;
+import com.example.ussms.Activity.classroom_stu;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -66,8 +67,12 @@ private String language;
             case R.id.igb120:
                Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
 //                m.g(classroom);
-                startActivity(new Intent(getContext(), Class_t.class));
+                if (language !="STN_1") {
+                    startActivity(new Intent(getContext(), Class_t.class));
+                }else{
+                    startActivity(new Intent(getContext(), classroom_stu.class));
 
+                }
                 break;
             case R.id.igb2:
                 startActivity(new Intent(getContext(), News.class));

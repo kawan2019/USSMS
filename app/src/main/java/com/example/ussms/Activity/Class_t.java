@@ -84,11 +84,11 @@ public class Class_t extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_class_t);
 
-                mClassList = findViewById(R.id.class_list);
+        mClassList = findViewById(R.id.class_list_s);
         mClassBtn = findViewById(R.id.class_btn);
         mNameClass = findViewById(R.id.edClass_name);
         mLevelClass = findViewById(R.id.level_class);
-        mback=findViewById(R.id.backpost);
+        mback=findViewById(R.id.backhome);
         mAddClass = findViewById(R.id.addClass);
         LinearLayout contentLayout = findViewById(R.id.contLayout);
         sheetBehavior = BottomSheetBehavior.from(contentLayout);

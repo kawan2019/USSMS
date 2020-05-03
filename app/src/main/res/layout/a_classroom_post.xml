@@ -22,7 +22,7 @@
             android:layout_height="wrap_content">
 
             <ImageButton
-                android:id="@+id/backpost"
+                android:id="@+id/backhome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"

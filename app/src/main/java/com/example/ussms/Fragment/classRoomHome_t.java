@@ -17,6 +17,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class classRoomHome_t extends Fragment {
     private FirestoreRecyclerAdapter adapter;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
+    private Button mdownload;
 
 
     public classRoomHome_t() {
@@ -70,6 +72,7 @@ public class classRoomHome_t extends Fragment {
 
         mlectureList = view.findViewById(R.id.lecture_list);
         mAuth = FirebaseAuth.getInstance();
+
 
         SharedPreferences pref = getActivity().getSharedPreferences("Class", Activity.MODE_PRIVATE);
         String cn = pref.getString("CN","");
@@ -93,6 +96,8 @@ public class classRoomHome_t extends Fragment {
             public classRoomHome_t.UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View mview = LayoutInflater.from(parent.getContext()).inflate(R.layout.l_post_classroom,parent,false);
 
+                mdownload = mview.findViewById(R.id.download_btn);
+
                 return new classRoomHome_t.UsersViewHolder(mview);
             }
 
@@ -110,15 +115,22 @@ public class classRoomHome_t extends Fragment {
                 Glide.with(getContext()).load(u.getPhotoUser()).into(userImage);
 
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                mdownload.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                String url=u.getFile();
-                downloadFile(getActivity(),"Mobile", ".*",DIRECTORY_DOWNLOADS,url);
+                        String url=u.getFile();
+                        downloadFile(getActivity(),"Mobile", ".*",DIRECTORY_DOWNLOADS,url);
+
 
                     }
                 });
+//                holder.mdownload.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                    }
+//                });
 
             }
         };
