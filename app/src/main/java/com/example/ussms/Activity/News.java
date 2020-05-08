@@ -6,31 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.ussms.Adapter.PageAdapter;
-import com.example.ussms.Fragment.News.NewsAddPost;
-import com.example.ussms.Fragment.News.NewsHome;
-import com.example.ussms.Fragment.News.NewsNotification;
-import com.example.ussms.Fragment.News.NewsProfile;
 import com.example.ussms.R;
-import com.eyebrows.video.EyebrowsVideoView;
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
 public class News extends AppCompatActivity {
-    private BottomNavigationView mainbottomNav;
-    private NewsHome homeFragment;
-    private NewsNotification notificationFragment;
-    private NewsProfile accountFragment;
-    EyebrowsVideoView videoView;
-    private NewsAddPost addPostFragment;
-    private PageAdapter adapter;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    TabItem tabNews;
-    TabItem tabAdd;
-    TabItem tabNotifi;
-    TabItem tabAccount;
     BadgeDrawable badge;
     PageAdapter pageAdapter;
     @Override

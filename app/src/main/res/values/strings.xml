@@ -69,6 +69,8 @@
     <string name="default_notification_channel_id">abcd</string>
     <string name="fcm_message">hhhh</string>
     <string name="title_a_news">News</string>
+    <string name="sample_image_name">Image Name</string>
+    <string name="Descreption">Descreption</string>
 
     <string-array name="departments_array">
         <item>Computer</item>

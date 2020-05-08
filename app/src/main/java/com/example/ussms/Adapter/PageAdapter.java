@@ -28,13 +28,13 @@ public class PageAdapter extends FragmentPagerAdapter {
             case 0:
                 return new NewsHome();
             case 1:
-                return new NewsAddPost();
-            case 2:
-                return new NewsNotification();
-            case 3:
-                return new NewsProfile();
-            case 4:
                 return new NewsSearch();
+            case 2:
+                return new NewsAddPost();
+            case 3:
+                return new NewsNotification();
+            case 4:
+                return new NewsProfile();
             default:
                 return null;
         }

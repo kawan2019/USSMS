@@ -1,14 +1,12 @@
-package com.example.ussms.Fragment.News;
+package com.example.ussms.Activity;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.asksira.bsimagepicker.BSImagePicker;
 import com.bumptech.glide.Glide;
@@ -16,37 +14,30 @@ import com.example.ussms.R;
 
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class NewsNotification extends Fragment implements BSImagePicker.OnSingleImageSelectedListener,
+public class aa extends AppCompatActivity implements BSImagePicker.OnSingleImageSelectedListener,
         BSImagePicker.OnMultiImageSelectedListener, BSImagePicker.ImageLoaderDelegate, BSImagePicker.OnSelectImageCancelledListener {
 
     private ImageView ivImage1, ivImage2, ivImage3, ivImage4, ivImage5, ivImage6;
-    public NewsNotification() {
-    }
-
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-         View view = inflater.inflate(R.layout.a_aa, container, false);
-
-        ivImage1 = view.findViewById(R.id.iv_image1);
-        ivImage2 = view.findViewById(R.id.iv_image2);
-        ivImage3 = view.findViewById(R.id.iv_image3);
-        ivImage4 = view.findViewById(R.id.iv_image4);
-        ivImage5 = view.findViewById(R.id.iv_image5);
-        ivImage6 = view.findViewById(R.id.iv_image6);
-        view.findViewById(R.id.tv_single_selection).setOnClickListener(new View.OnClickListener() {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.a_aa);
+        ivImage1 = findViewById(R.id.iv_image1);
+        ivImage2 = findViewById(R.id.iv_image2);
+        ivImage3 = findViewById(R.id.iv_image3);
+        ivImage4 = findViewById(R.id.iv_image4);
+        ivImage5 = findViewById(R.id.iv_image5);
+        ivImage6 = findViewById(R.id.iv_image6);
+        findViewById(R.id.tv_single_selection).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BSImagePicker pickerDialog = new BSImagePicker.Builder("com.asksira.imagepickersheetdemo.fileprovider")
                         .build();
-                pickerDialog.show(getActivity().getSupportFragmentManager(), "picker");
+                pickerDialog.show(getSupportFragmentManager(), "picker");
             }
         });
-        view.findViewById(R.id.tv_multi_selection).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.tv_multi_selection).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BSImagePicker pickerDialog = new BSImagePicker.Builder("com.asksira.imagepickersheetdemo.fileprovider")
@@ -55,14 +46,14 @@ public class NewsNotification extends Fragment implements BSImagePicker.OnSingle
                         .setMinimumMultiSelectCount(3)
                         .setMaximumMultiSelectCount(6)
                         .build();
-                pickerDialog.show(getActivity().getSupportFragmentManager(), "picker");
+                pickerDialog.show(getSupportFragmentManager(), "picker");
             }
         });
-    return view;}
+    }
 
     @Override
     public void onSingleImageSelected(Uri uri, String tag) {
-        Glide.with(getContext()).load(uri).into(ivImage2);
+        Glide.with(aa.this).load(uri).into(ivImage2);
     }
 
     @Override
@@ -96,11 +87,11 @@ public class NewsNotification extends Fragment implements BSImagePicker.OnSingle
 
     @Override
     public void loadImage(Uri imageUri, ImageView ivImage) {
-        Glide.with(getContext()).load(imageUri).into(ivImage);
+        Glide.with(aa.this).load(imageUri).into(ivImage);
     }
 
     @Override
     public void onCancelled(boolean isMultiSelecting, String tag) {
-        Toast.makeText(getContext(), "Selection is cancelled, Multi-selection is " + isMultiSelecting, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Selection is cancelled, Multi-selection is " + isMultiSelecting, Toast.LENGTH_SHORT).show();
     }
 }
