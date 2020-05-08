@@ -37,6 +37,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
+    public String department;
     FirebaseAuth mAuth;
 //    Fragment classroom = new ClassR_t();
     FirestoreRecyclerAdapter adapter;
@@ -56,7 +57,13 @@ private String language;
 
         SharedPreferences preferences = this.getActivity().getSharedPreferences("Account", Context.MODE_PRIVATE);
         language = preferences.getString("Type","");
+        department = preferences.getString("Dep","");
+
         setLayout();
+
+
+
+
         return root;
     }
 
@@ -66,13 +73,15 @@ private String language;
         switch (view.getId()) {
             case R.id.igb120:
                Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
-//                m.g(classroom);
-                if (language !="STN_1") {
-                    startActivity(new Intent(getContext(), Class_t.class));
-                }else{
-                    startActivity(new Intent(getContext(), classroom_stu.class));
+                startActivity(new Intent(getContext(), Class_t.class));
 
-                }
+//                m.g(classroom);
+//                if ("TCHN_1".equals(language)) {
+//                    startActivity(new Intent(getContext(), Class_t.class));
+//                }else{
+//                    startActivity(new Intent(getContext(), classroom_stu.class));
+//
+//                }
                 break;
             case R.id.igb2:
                 startActivity(new Intent(getContext(), News.class));

@@ -15,8 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.classroom_stu"></activity>
-        <activity android:name=".Activity.ClassRoom_main" />
+        <activity android:name=".Activity.ClassRoom_main_stu"></activity>
+        <activity android:name=".Activity.classroom_stu" />
+        <activity android:name=".Activity.ClassRoom_main_t" />
         <activity android:name=".Activity.Class_t" />
         <activity android:name=".Activity.NewPostClassRoom" />
         <activity

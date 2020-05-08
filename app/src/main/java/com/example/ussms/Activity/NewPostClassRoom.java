@@ -74,7 +74,8 @@ public class NewPostClassRoom extends AppCompatActivity {
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(NewPostClassRoom.this,ClassRoom_main.class));
+                startActivity(new Intent(NewPostClassRoom.this, ClassRoom_main_t.class));
+                finish();
             }
         });
 
@@ -172,7 +173,7 @@ public class NewPostClassRoom extends AppCompatActivity {
 
                             newPostProgress.setVisibility(View.INVISIBLE);
 
-                            Intent mainIntent = new Intent(NewPostClassRoom.this , ClassRoom_main.class);
+                            Intent mainIntent = new Intent(NewPostClassRoom.this , ClassRoom_main_t.class);
                             startActivity(mainIntent);
                             finish();
 //                            mprogress.dismiss();

@@ -42,17 +42,15 @@ import static android.os.Environment.DIRECTORY_DOWNLOADS;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class classRoomHome_t extends Fragment {
+public class classRoomHome_stu extends Fragment {
 
-      private RecyclerView mlectureList;
+    private RecyclerView mlectureList;
     private FirestoreRecyclerAdapter adapter;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
     private Button mdownload;
 
-
-
-    public classRoomHome_t() {
+    public classRoomHome_stu() {
         // Required empty public constructor
     }
 
@@ -61,21 +59,18 @@ public class classRoomHome_t extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       View view = inflater.inflate(R.layout.f_class_room_home_t, container, false);
-
+        View view =  inflater.inflate(R.layout.f_class_room_home_stu, container, false);
         mlectureList = view.findViewById(R.id.lecture_list_stu);
         mAuth = FirebaseAuth.getInstance();
-
-
 
 
         SharedPreferences pref = getActivity().getSharedPreferences("Class", Activity.MODE_PRIVATE);
         String cn = pref.getString("CN","");
         if (cn != null)
-        Toast.makeText(getContext(),cn,Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),cn,Toast.LENGTH_LONG).show();
         Query query = fsdb.collection("Users")
-               .document(mAuth.getCurrentUser().getDisplayName())
-               .collection("ClassRoom").document(cn).collection("FILE");
+                .document(mAuth.getCurrentUser().getDisplayName())
+                .collection("ClassRoom").document(cn).collection("FILE");
 
         //Recycleroption
         FirestoreRecyclerOptions<ClassFile> options = new FirestoreRecyclerOptions.Builder<ClassFile>()
@@ -85,19 +80,19 @@ public class classRoomHome_t extends Fragment {
 
 
 
-        adapter = new FirestoreRecyclerAdapter<ClassFile, classRoomHome_t.UsersViewHolder>(options) {
+        adapter = new FirestoreRecyclerAdapter<ClassFile, classRoomHome_stu.UsersViewHolder>(options) {
             @NonNull
             @Override
-            public classRoomHome_t.UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            public classRoomHome_stu.UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View mview = LayoutInflater.from(parent.getContext()).inflate(R.layout.l_post_classroom,parent,false);
 
                 mdownload = mview.findViewById(R.id.download_btn);
 
-                return new classRoomHome_t.UsersViewHolder(mview);
+                return new classRoomHome_stu.UsersViewHolder(mview);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final UsersViewHolder holder, int i, @NonNull final ClassFile u) {
+            protected void onBindViewHolder(@NonNull final classRoomHome_stu.UsersViewHolder holder, int i, @NonNull final ClassFile u) {
 
                 holder.mOwnerClass.setText(u.getFileOwner());
 
@@ -136,21 +131,21 @@ public class classRoomHome_t extends Fragment {
 
         return view;
 
-   }
+    }
 
-   public void downloadFile(Context context, String fileName,String fileExtension, String destinationDirectory, String url ){
+    public void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url ){
 
 
-    DownloadManager downloadManager =(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager downloadManager =(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 
-    Uri uri = Uri.parse(url);
-    DownloadManager.Request request = new DownloadManager.Request(uri);
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 //                request.setDestinationInExternalFilesDir(context,destinationDirectory, fileName + fileExtension);
-                File mydownload = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+ "/myFolder");
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                downloadManager.enqueue(request);
-}
+        File mydownload = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+ "/myFolder");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        downloadManager.enqueue(request);
+    }
 
     private void showMessage(String m){
         Toast.makeText(getContext(),m,Toast.LENGTH_LONG).show();
@@ -178,6 +173,6 @@ public class classRoomHome_t extends Fragment {
         }
 
 
-   }
+    }
 
 }

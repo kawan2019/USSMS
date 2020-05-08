@@ -67,6 +67,8 @@ public class Class_t extends AppCompatActivity {
     int e;
     public String a;
     String Nclass;
+    private int LEV;
+    private String departmentt;
 //    Fragment home = new classRoom_Main_t();
 
     public String getCln() {
@@ -83,7 +85,7 @@ public class Class_t extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_class_t);
-
+        //
         mClassList = findViewById(R.id.class_list_s);
         mClassBtn = findViewById(R.id.class_btn);
         mNameClass = findViewById(R.id.edClass_name);
@@ -96,14 +98,33 @@ public class Class_t extends AppCompatActivity {
         sheetBehavior.setHideable(false);//prevents the boottom sheet from completely hiding off the screen
         sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);//initially state to fully expanded
         mAuth = FirebaseAuth.getInstance();
-        reload();
-
+        //reload();
+        fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        if (task.isSuccessful()){
+                            if (document.exists()){
+                                departmentt = (String) document.get("DEPARTMENT");
+                                LEV = (Integer) document.get("LEVEL");
+                                Log.d("EEEEEE",departmentt+LEV);
+                            }else {
+                                Log.d("EEEEEE","!Ex");
+                            }
+                        }else {
+                            Toast.makeText(Class_t.this,"Please Check internet Connection",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+        Log.d("EEEEEE",departmentt+LEV);
         mback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Class_t.this, MainActivity.class));
             }
         });
+
         mAddClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,24 +153,24 @@ public class Class_t extends AppCompatActivity {
             public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
                 level_ = i + 1;
                 validateLevSp = false;
-                fsdb.collection("Users").whereEqualTo("DEPARTMENT",department)
-                        .whereEqualTo("LEVEL", level_)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Log.d("DOCC", document.getId());
-                                        su[j]=document.getId()+"";
-                                        j++;
-                                    }
-                                } else {
-                                    Log.d("DOCC", "Error getting documents: ", task.getException());
-                                }
-                            }
-                        });
+//                fsdb.collection("Users").whereEqualTo("DEPARTMENT",department)
+//                        .whereEqualTo("LEVEL", level_)
+//                        .get()
+//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                if (task.isSuccessful()) {
+//
+//                                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                                        Log.d("DOCC", document.getId());
+//                                        su[j]=document.getId()+"";
+//                                        j++;
+//                                    }
+//                                } else {
+//                                    Log.d("DOCC", "Error getting documents: ", task.getException());
+//                                }
+//                            }
+//                        });
             }
             @Override
             public void onNothingSelected(MaterialSpinner materialSpinner) {
@@ -163,12 +184,12 @@ public class Class_t extends AppCompatActivity {
             public void onClick(View view) {
                  Nclass = mNameClass.getText().toString();
                 if (department == null){
-                    showMessage("Please Check internet Connection.");
-                    reload();
+                   // showMessage("Please Check internet Connection.");
+                    //reload();
                 }else if(validateLevSp){
-                    showMessage("please Select Level.");
+                    //showMessage("please Select Level.");
                 }else if(TextUtils.isEmpty(Nclass)){
-                    showMessage("Class name Empty.");
+                    //showMessage("Class name Empty.");
                 }else {
                     Map<String, Object> hello = new HashMap<>();
                     hello.put("ClassOwner", mAuth.getCurrentUser().getDisplayName());
@@ -178,26 +199,29 @@ public class Class_t extends AppCompatActivity {
                     hello.put("PhotoUser",mAuth.getCurrentUser().getPhotoUrl()+toString());
                     hello.put("ClassDepartment",department);
                     hello.put("ClassMembersNumber",j);
-                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
-                            .collection("ClassRoom").document(Nclass).set(hello);
-                    for (int a = 0; a <= j-1; a++) {
-                        e = a;
-                        fsdb.collection("Users").document(su[a])
-                                .collection("ClassRoom").document(Nclass).set(hello).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                showMessage("send to "+su[e]);
-                            }
-                        });
-                    }
+//                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
+//                            .collection("ClassRoom").document(Nclass).set(hello);
+
+
+                    fsdb.collection("ClassRoom").document(department)
+                            .collection(String.valueOf(level_)).document(Nclass).set(hello);
+
+//                    for (int a = 0; a <= j-1; a++) {
+//                        e = a;
+//                        fsdb.collection("Users").document(su[a])
+//                                .collection("ClassRoom").document(Nclass).set(hello).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                showMessage("send to "+su[e]);
+//                            }
+//                        });
+//                    }
                 }
             }
         });
-        Query query = fsdb.collection("Users")
-                .document(mAuth.getCurrentUser().getDisplayName())
-                .collection("ClassRoom");
 
-        //Recycleroption
+        Query query =   fsdb.collection("ClassRoom").document("English").collection(LEV+"");
+
 
 
         FirestoreRecyclerOptions<classUser> options = new FirestoreRecyclerOptions.Builder<classUser>()
@@ -235,7 +259,7 @@ public class Class_t extends AppCompatActivity {
                         editor.putLong("CL", u.getClassLevel());
                         editor.apply();
 
-                        Intent newPostIntent = new Intent(Class_t.this, ClassRoom_main.class);
+                        Intent newPostIntent = new Intent(Class_t.this, ClassRoom_main_t.class);
                         startActivity(newPostIntent);
                     }
                 });
@@ -251,18 +275,7 @@ public class Class_t extends AppCompatActivity {
     }
 
     private void reload() {
-        fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()){
-                            DocumentSnapshot document = task.getResult();
-                            department = (String) document.get("DEPARTMENT");
-                        }else {
-                            Toast.makeText(Class_t.this,"Please Check internet Connection",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+
     }
 
 

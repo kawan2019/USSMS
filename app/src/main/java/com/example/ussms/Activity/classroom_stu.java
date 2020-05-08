@@ -16,15 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.ussms.Fragment.HomeFragment;
 import com.example.ussms.Model.classUser;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -100,7 +96,7 @@ public class classroom_stu extends AppCompatActivity {
                         editor.putLong("CL", u.getClassLevel());
                         editor.apply();
 
-                        Intent newPostIntent = new Intent(classroom_stu.this, ClassRoom_main.class);
+                        Intent newPostIntent = new Intent(classroom_stu.this, ClassRoom_main_stu.class);
                         startActivity(newPostIntent);
                     }
                 });
