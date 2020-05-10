@@ -1,15 +1,11 @@
 package com.example.ussms.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +19,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.ussms.Model.classUser;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.tiper.MaterialSpinner;
 
 import java.util.HashMap;
@@ -59,33 +54,24 @@ public class Class_t extends AppCompatActivity {
     private boolean validateLevSp = true;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
-    String department = null;
     Integer[] Level = {1, 2, 3, 4};
     String[] su = new String[50];
     int level_;
     int j = 0;
-    int e;
     public String a;
     String Nclass;
-    private int LEV;
-    private String departmentt;
-//    Fragment home = new classRoom_Main_t();
-
-    public String getCln() {
-        return cln;
-    }
-
-    public void setCln(String cln) {
-        this.cln = cln;
-    }
-
+    private Long LEV;
+    private String dep;
     private String cln;
+    private ProgressDialog progressDialog;
+    Query query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_class_t);
-        //
+
+
         mClassList = findViewById(R.id.class_list_s);
         mClassBtn = findViewById(R.id.class_btn);
         mNameClass = findViewById(R.id.edClass_name);
@@ -95,29 +81,12 @@ public class Class_t extends AppCompatActivity {
         LinearLayout contentLayout = findViewById(R.id.contLayout);
         sheetBehavior = BottomSheetBehavior.from(contentLayout);
         sheetBehavior.setFitToContents(false);
-        sheetBehavior.setHideable(false);//prevents the boottom sheet from completely hiding off the screen
-        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);//initially state to fully expanded
+        sheetBehavior.setHideable(false);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         mAuth = FirebaseAuth.getInstance();
-        //reload();
-        fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        if (task.isSuccessful()){
-                            if (document.exists()){
-                                departmentt = (String) document.get("DEPARTMENT");
-                                LEV = (Integer) document.get("LEVEL");
-                                Log.d("EEEEEE",departmentt+LEV);
-                            }else {
-                                Log.d("EEEEEE","!Ex");
-                            }
-                        }else {
-                            Toast.makeText(Class_t.this,"Please Check internet Connection",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-        Log.d("EEEEEE",departmentt+LEV);
+        SharedPreferences pref = getSharedPreferences("Account", Activity.MODE_PRIVATE);
+        String Department = pref.getString("Department", "");
+
         mback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,13 +152,13 @@ public class Class_t extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                  Nclass = mNameClass.getText().toString();
-                if (department == null){
-                   // showMessage("Please Check internet Connection.");
-                    //reload();
+                if (reload() == null){
+                    showMessage("Please Check internet Connection.");
+                    reload();
                 }else if(validateLevSp){
-                    //showMessage("please Select Level.");
+                    showMessage("please Select Level.");
                 }else if(TextUtils.isEmpty(Nclass)){
-                    //showMessage("Class name Empty.");
+                    showMessage("Class name Empty.");
                 }else {
                     Map<String, Object> hello = new HashMap<>();
                     hello.put("ClassOwner", mAuth.getCurrentUser().getDisplayName());
@@ -197,14 +166,14 @@ public class Class_t extends AppCompatActivity {
                     hello.put("CreateTime", FieldValue.serverTimestamp());
                     hello.put("ClassLevel", level_);
                     hello.put("PhotoUser",mAuth.getCurrentUser().getPhotoUrl()+toString());
-                    hello.put("ClassDepartment",department);
+                    hello.put("ClassDepartment",dep);
                     hello.put("ClassMembersNumber",j);
 //                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
 //                            .collection("ClassRoom").document(Nclass).set(hello);
 
 
-                    fsdb.collection("ClassRoom").document(department)
-                            .collection(String.valueOf(level_)).document(Nclass).set(hello);
+                    fsdb.collection("ClassRoom").document(dep).collection(String.valueOf(level_))
+                            .document(Nclass).set(hello);
 
 //                    for (int a = 0; a <= j-1; a++) {
 //                        e = a;
@@ -220,16 +189,17 @@ public class Class_t extends AppCompatActivity {
             }
         });
 
-        Query query =   fsdb.collection("ClassRoom").document("English").collection(LEV+"");
 
 
+
+
+     //
+
+        query = fsdb.collection("ClassRoom").document(Department).collection("4");
 
         FirestoreRecyclerOptions<classUser> options = new FirestoreRecyclerOptions.Builder<classUser>()
-                .setLifecycleOwner(this)
                 .setQuery(query, classUser.class)
                 .build();
-
-
 
         adapter = new FirestoreRecyclerAdapter<classUser, Class_t.UsersViewHolder>(options) {
             @NonNull
@@ -274,15 +244,32 @@ public class Class_t extends AppCompatActivity {
 
     }
 
-    private void reload() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
 
     }
 
+    private String reload() {
+
+   return dep;
+    }
+    private void showDialog(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+    private  void dismissDialog(){
+        if (progressDialog!=null){
+            progressDialog.dismiss();
+        }
+    }
 
     private void showMessage(String m){
         Toast.makeText(Class_t.this,m,Toast.LENGTH_LONG).show();
     }
-
     private class UsersViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mClassName;

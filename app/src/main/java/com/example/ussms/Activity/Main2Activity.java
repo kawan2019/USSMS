@@ -207,9 +207,10 @@ public class Main2Activity extends AppCompatActivity {
 
                                                         avi.hide();
                                                         String type = (String) documentSnapshot.get("TYPE");
-
+                                                        String department = (String) documentSnapshot.get("DEPARTMENT");
                                                         SharedPreferences.Editor editor = getSharedPreferences("Account",MODE_PRIVATE).edit();
                                                         editor.putString("Type",type);
+                                                        editor.putString("Department",department);
                                                         editor.apply();
 
                                                         FirebaseInstanceId.getInstance().getInstanceId()

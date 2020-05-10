@@ -1,11 +1,5 @@
 package com.example.ussms.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.ussms.Fragment.classRoomAcount_t;
 import com.example.ussms.Fragment.classRoomHome_t;
@@ -70,7 +70,8 @@ public class ClassRoom_main_t extends AppCompatActivity {
 
         mainbottomNav = findViewById(R.id.mainBottomNav);
         homeFragment_t = new classRoomHome_t();
-//        class_r = new ClassR_t();
+
+
         notificationFragment = new classRoomNotification_t();
         accountFragment = new classRoomAcount_t();
 
