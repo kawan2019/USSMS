@@ -83,7 +83,6 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.f_news_add_post, container, false);
 
-
         storage = FirebaseStorage.getInstance();
         mAuth = FirebaseAuth.getInstance();
         savedImagesUri = new ArrayList<>();
@@ -213,13 +212,14 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
     }
 
     private void pickImage() {
-        BSImagePicker pickerDialog = new BSImagePicker.Builder("com.example.ussms.fileprovider")
+        BSImagePicker pickerDialog = new BSImagePicker.Builder("com.example.ussms.Fragment.News")
                 .setMaximumDisplayingImages(Integer.MAX_VALUE)
                 .isMultiSelect()
-                .setMinimumMultiSelectCount(1)
-                .setMaximumMultiSelectCount(5)
+                .setMinimumMultiSelectCount(3)
+                .setMaximumMultiSelectCount(6)
                 .build();
         pickerDialog.show(getChildFragmentManager(), "picker");
+
     }
 
     @Override

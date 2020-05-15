@@ -51,7 +51,7 @@ import es.dmoral.toasty.Toasty;
 
 public class Signup extends AlertDialog implements android.view.View.OnClickListener {
     private static final String PHONE_NUMBER = "PHONE_NUMBER";
-    boolean ve = false;
+    private boolean ve = false;
     private AlertDialog  alertDialogAllSet;
 
     private boolean validateDepSp = true;
@@ -60,7 +60,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     private String token;
     private String email, password, fullname;
     private String who = "STN_1",department;
-    int level_;
+    private int level_;
 
     @ServerTimestamp
     Date time;
@@ -69,27 +69,27 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
 
     private Button  btnRegisterRegister, btnOkayAllSet;
     private MaterialButtonToggleGroup toggleButton;
-    MaterialSpinner spLevelRegister, spDepartmentRegister;
+    private MaterialSpinner spLevelRegister, spDepartmentRegister;
     private AVLoadingIndicatorView avi, avir;
-    Integer[] Level = {1, 2, 3, 4};
-    final static String USERNAME = "USERNAME";
-    final static String DEPARTMENT = "DEPARTMENT";
-    final static String FULLNAME = "FULLNAME";
-    final static String EMAIL = "EMAIL";
-    final static String LEVEL = "LEVEL";
-    final static String IMAGE = "IMAGE";
-    final static String IMEI = "IMEI";
-    final static String DID = "DID";
-    final static String UID = "UID";
-    final static String DATE_CREATION = "DATE_CREATION";
-    final static String STATUS = "STATUS";
-    final static String TOKEN = "TOKEN";
-    final static String TYPE = "TYPE";
+    private Integer[] Level = {1, 2, 3, 4};
+    private final static String USERNAME = "USERNAME";
+    private final static String DEPARTMENT = "DEPARTMENT";
+    private final static String FULLNAME = "FULLNAME";
+    private final static String EMAIL = "EMAIL";
+    private final static String LEVEL = "LEVEL";
+    private final static String IMAGE = "IMAGE";
+    private final static String IMEI = "IMEI";
+    private final static String DID = "DID";
+    private final static String UID = "UID";
+    private final static String DATE_CREATION = "DATE_CREATION";
+    private final static String STATUS = "STATUS";
+    private final static String TOKEN = "TOKEN";
+    private final static String TYPE = "TYPE";
     private static final String TAG = "EmailPassword";
     private FirebaseAuth mAuth;
-    public StorageReference storageReference;
+    private  StorageReference storageReference;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
-    public Activity c;
+    private  Activity c;
 
     public Signup(Activity a) {
         super(a);
@@ -109,6 +109,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
         edPasswordRegister = findViewById(R.id.edPassword_register);
         btnRegisterRegister = findViewById(R.id.btnRegister_register);
         avir = findViewById(R.id.avi_register);
+
         spDepartmentRegister = findViewById(R.id.spDepartment_register);
         spLevelRegister = findViewById(R.id.spLevel_register);
         toggleButton = findViewById(R.id.tgWho_register);
