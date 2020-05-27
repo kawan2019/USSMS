@@ -31,7 +31,6 @@ public class ClassRoom_main_t extends AppCompatActivity {
     private classRoomAcount_t accountFragment;
     private Class_t class_r;
     private ImageButton mBack;
-    private FloatingActionButton addPostBtn;
 
 
     public String getCl_n() {
@@ -50,14 +49,7 @@ public class ClassRoom_main_t extends AppCompatActivity {
         setContentView(R.layout.a_class_room_main_t);
 
 
-        addPostBtn = findViewById(R.id.add_post_btn);
-        addPostBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent newPostIntent = new Intent(ClassRoom_main_t.this, NewPostClassRoom.class);
-                startActivity(newPostIntent);
-            }
-        });
+
 
 
         SharedPreferences pref = getSharedPreferences("Class", Activity.MODE_PRIVATE);

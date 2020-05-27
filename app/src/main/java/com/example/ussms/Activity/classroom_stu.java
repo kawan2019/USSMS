@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +37,6 @@ public class classroom_stu extends AppCompatActivity {
     private RecyclerView mClassList;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +46,11 @@ public class classroom_stu extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mClassList=findViewById(R.id.class_list_s);
 
+        SharedPreferences pref = getSharedPreferences("Account", Activity.MODE_PRIVATE);
+        final String Department = pref.getString("Department", "");
+        Long Lev = pref.getLong("Level",0 );
+
+
 
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,9 +59,10 @@ public class classroom_stu extends AppCompatActivity {
             }
         });
 
-        Query query = fsdb.collection("Users")
-                .document(mAuth.getCurrentUser().getDisplayName())
-                .collection("ClassRoom");
+
+
+        Query query = fsdb.collection("ClassRoom").document(Department).collection(Lev+"");
+
 
         //Recycleroption
 

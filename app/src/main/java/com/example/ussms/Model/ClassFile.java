@@ -3,6 +3,7 @@ package com.example.ussms.Model;
 import java.util.Date;
 
 public class ClassFile {
+    private String Item_id;
     private String FileOwner;
     private String File;
     private Date CreateTime;
@@ -13,7 +14,7 @@ public class ClassFile {
 
     private ClassFile(){ }
 
-    private ClassFile(String fileOwner, String file, String FDescription,Date CreateTime, String photoUser, String FDepartment, long FLevel) {
+    private ClassFile(String fileOwner, String file, String FDescription,Date CreateTime, String photoUser, String FDepartment, long FLevel,String Item_id) {
         this.FileOwner = fileOwner;
         this.File = file;
 
@@ -22,6 +23,7 @@ public class ClassFile {
         this.FDepartment = FDepartment;
         this.FLevel = FLevel;
         this.CreateTime =CreateTime;
+        this.Item_id =Item_id;
     }
 
     public String getFileOwner() {
@@ -81,4 +83,11 @@ public class ClassFile {
     }
 
 
+    public String getItem_id() {
+        return Item_id;
+    }
+
+    public void setItem_id(String item_id) {
+        Item_id = item_id;
+    }
 }

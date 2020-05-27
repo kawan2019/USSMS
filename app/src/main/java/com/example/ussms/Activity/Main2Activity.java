@@ -202,15 +202,19 @@ public class Main2Activity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                     if(!documentSnapshot.exists()){
-
+                                                        hideProgressBar();
+                                                        Toasty.error(getApplicationContext(), "An Error", Toast.LENGTH_LONG).show();
                                                     }else{
 
                                                         avi.hide();
                                                         String type = (String) documentSnapshot.get("TYPE");
                                                         String department = (String) documentSnapshot.get("DEPARTMENT");
+                                                        long Level = (long) documentSnapshot.get("LEVEL");
+
                                                         SharedPreferences.Editor editor = getSharedPreferences("Account",MODE_PRIVATE).edit();
                                                         editor.putString("Type",type);
                                                         editor.putString("Department",department);
+                                                        editor.putLong("Level",Level);
                                                         editor.apply();
 
                                                         FirebaseInstanceId.getInstance().getInstanceId()

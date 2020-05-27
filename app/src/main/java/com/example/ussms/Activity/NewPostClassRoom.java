@@ -84,24 +84,24 @@ public class NewPostClassRoom extends AppCompatActivity {
          cd = pref.getString("CD","");
          cl = pref.getLong("CL",0);
 
-        fsdb.collection("Users").whereEqualTo("DEPARTMENT",cd)
-                .whereEqualTo("LEVEL", cl)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("DOCC", document.getId());
-                                su[j]=document.getId()+"";
-                                j++;
-                            }
-                        } else {
-                            Log.d("DOCC", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+//        fsdb.collection("Users").whereEqualTo("DEPARTMENT",cd)
+//                .whereEqualTo("LEVEL", cl)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                Log.d("DOCC", document.getId());
+//                                su[j]=document.getId()+"";
+//                                j++;
+//                            }
+//                        } else {
+//                            Log.d("DOCC", "Error getting documents: ", task.getException());
+//                        }
+//                    }
+//                });
 
 
         mselectImage.setOnClickListener(new View.OnClickListener() {
@@ -157,19 +157,23 @@ public class NewPostClassRoom extends AppCompatActivity {
                             f.put("FLevel", cl);
 
 
-                            for (int a = 0; a <= j-1; a++) {
-                                fsdb.collection("Users").document(su[a])
-                                        .collection("ClassRoom").document(cn).collection("FILE").document().set(f)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toasty.success(getApplicationContext(),"Success Upload",Toasty.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
+//                            for (int a = 0; a <= j-1; a++) {
+//                                fsdb.collection("Users").document(su[a])
+//                                        .collection("ClassRoom").document(cn).collection("FILE").document().set(f)
+//                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                    @Override
+//                                    public void onSuccess(Void aVoid) {
+//                                        Toasty.success(getApplicationContext(),"Success Upload",Toasty.LENGTH_LONG).show();
+//                                    }
+//                                });
+//                            }
 
                             fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
                                     .collection("ClassRoom").document(cn).collection("FILE").document().set(f);
+
+                            fsdb.collection("ClassRoom").document(cd).collection(cl+"")
+                                    .document(cn).collection("FILE").document().set(f);
+
 
                             newPostProgress.setVisibility(View.INVISIBLE);
 

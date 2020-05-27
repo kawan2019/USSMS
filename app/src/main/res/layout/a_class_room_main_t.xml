@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#E3E1E1"
     tools:context=".Activity.ClassRoom_main_t">
 
     <androidx.appcompat.widget.Toolbar
@@ -68,18 +69,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_post_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:backgroundTint="#EFEFEF"
-            app:layout_constraintBottom_toTopOf="@+id/mainBottomNav"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@mipmap/action_add" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,9 +15,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.ussms.Fragment.classRoomAcount_stu;
 import com.example.ussms.Fragment.classRoomAcount_t;
 import com.example.ussms.Fragment.classRoomHome_stu;
 import com.example.ussms.Fragment.classRoomHome_t;
+import com.example.ussms.Fragment.classRoomNotification_stu;
 import com.example.ussms.Fragment.classRoomNotification_t;
 import com.example.ussms.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,8 +29,8 @@ public class ClassRoom_main_stu extends AppCompatActivity {
     private BottomNavigationView mainbottomNav;
     private FragmentActivity myContext;
     private classRoomHome_stu homeFragment_stu;
-    private classRoomNotification_t notificationFragment;
-    private classRoomAcount_t accountFragment;
+    private classRoomNotification_stu notificationFragment;
+    private classRoomAcount_stu accountFragment;
     private Class_t class_r;
     private ImageButton mBack;
 
@@ -59,8 +61,8 @@ public class ClassRoom_main_stu extends AppCompatActivity {
         mainbottomNav = findViewById(R.id.mainBottomNav);
         homeFragment_stu = new classRoomHome_stu();
 //        class_r = new ClassR_t();
-        notificationFragment = new classRoomNotification_t();
-        accountFragment = new classRoomAcount_t();
+        notificationFragment = new classRoomNotification_stu();
+        accountFragment = new classRoomAcount_stu();
 
 
         mBack.setOnClickListener(new View.OnClickListener() {

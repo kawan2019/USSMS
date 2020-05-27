@@ -139,7 +139,8 @@ public class MainActivity extends AppCompatActivity {
                 if (mAuth.getCurrentUser() != null){
                     Map<String, Object> userMap = new HashMap<>();
                     userMap.put(TOKEN, "");
-                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
+                            .update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             mAuth.signOut();

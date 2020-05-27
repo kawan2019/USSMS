@@ -38,6 +38,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private FlipperLayout fliper;
     Fragment friends = new Friends();
     public String department;
+    public int level;
     FirebaseAuth mAuth;
 //    Fragment classroom = new ClassR_t();
     FirestoreRecyclerAdapter adapter;
@@ -69,19 +70,14 @@ private String language;
 
     @Override
     public void onClick(View view) {
-        MainActivity m = (MainActivity) getActivity();
         switch (view.getId()) {
             case R.id.igb120:
-               Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
-                startActivity(new Intent(getContext(), Class_t.class));
-
-//                m.g(classroom);
-//                if ("TCHN_1".equals(language)) {
-//                    startActivity(new Intent(getContext(), Class_t.class));
-//                }else{
-//                    startActivity(new Intent(getContext(), classroom_stu.class));
-//
-//                }
+              // Toasty.success(getContext(),language,Toasty.LENGTH_LONG,true).show();
+                if ("TCHN_1".equals(language)) {
+                    startActivity(new Intent(getContext(), Class_t.class));
+                }else{
+                    startActivity(new Intent(getContext(), classroom_stu.class));
+                }
                 break;
             case R.id.igb2:
                 startActivity(new Intent(getContext(), News.class));

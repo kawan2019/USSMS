@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +62,6 @@ public class Class_t extends AppCompatActivity {
     public String a;
     String Nclass;
     private Long LEV;
-    private String dep;
     private String cln;
     private ProgressDialog progressDialog;
     Query query;
@@ -85,7 +85,11 @@ public class Class_t extends AppCompatActivity {
         sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         mAuth = FirebaseAuth.getInstance();
         SharedPreferences pref = getSharedPreferences("Account", Activity.MODE_PRIVATE);
-        String Department = pref.getString("Department", "");
+        final String Department = pref.getString("Department", "");
+        Long Lev = pref.getLong("Level",0 );
+
+        Log.d("E", Lev+"");
+
 
         mback.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,9 +156,9 @@ public class Class_t extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                  Nclass = mNameClass.getText().toString();
-                if (reload() == null){
-                    showMessage("Please Check internet Connection.");
-                    reload();
+                if (Department == null){
+                    showMessage("you are fake...");
+                    startActivity(new Intent(Class_t.this,Splash.class));
                 }else if(validateLevSp){
                     showMessage("please Select Level.");
                 }else if(TextUtils.isEmpty(Nclass)){
@@ -166,13 +170,18 @@ public class Class_t extends AppCompatActivity {
                     hello.put("CreateTime", FieldValue.serverTimestamp());
                     hello.put("ClassLevel", level_);
                     hello.put("PhotoUser",mAuth.getCurrentUser().getPhotoUrl()+toString());
-                    hello.put("ClassDepartment",dep);
+                    hello.put("ClassDepartment",Department);
                     hello.put("ClassMembersNumber",j);
+
+
 //                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName())
 //                            .collection("ClassRoom").document(Nclass).set(hello);
 
 
-                    fsdb.collection("ClassRoom").document(dep).collection(String.valueOf(level_))
+                    fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).collection("ClassRoom")
+                            .document(Nclass).set(hello);
+
+                    fsdb.collection("ClassRoom").document(Department).collection(String.valueOf(level_))
                             .document(Nclass).set(hello);
 
 //                    for (int a = 0; a <= j-1; a++) {
@@ -195,7 +204,9 @@ public class Class_t extends AppCompatActivity {
 
      //
 
-        query = fsdb.collection("ClassRoom").document(Department).collection("4");
+         query = fsdb.collection("Users")
+                .document(mAuth.getCurrentUser().getDisplayName())
+                .collection("ClassRoom");
 
         FirestoreRecyclerOptions<classUser> options = new FirestoreRecyclerOptions.Builder<classUser>()
                 .setQuery(query, classUser.class)
@@ -251,10 +262,6 @@ public class Class_t extends AppCompatActivity {
 
     }
 
-    private String reload() {
-
-   return dep;
-    }
     private void showDialog(){
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);

@@ -19,10 +19,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.ussms.Activity.ClassRoom_main_t;
 import com.example.ussms.Activity.NewPostClassRoom;
 import com.example.ussms.Model.ClassFile;
 import com.example.ussms.R;
@@ -48,7 +50,9 @@ public class classRoomHome_t extends Fragment {
     private FirestoreRecyclerAdapter adapter;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
-    private Button mdownload;
+    private ImageButton mdownload;
+    private FloatingActionButton addPostBtn;
+
 
 
 
@@ -66,6 +70,15 @@ public class classRoomHome_t extends Fragment {
         mlectureList = view.findViewById(R.id.lecture_list_stu);
         mAuth = FirebaseAuth.getInstance();
 
+        addPostBtn = view.findViewById(R.id.add_post_btn);
+        addPostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newPostIntent = new Intent(getActivity(), NewPostClassRoom.class);
+                startActivity(newPostIntent);
+            }
+        });
+
 
 
 
@@ -73,6 +86,8 @@ public class classRoomHome_t extends Fragment {
         String cn = pref.getString("CN","");
         if (cn != null)
         Toast.makeText(getContext(),cn,Toast.LENGTH_LONG).show();
+
+
         Query query = fsdb.collection("Users")
                .document(mAuth.getCurrentUser().getDisplayName())
                .collection("ClassRoom").document(cn).collection("FILE");

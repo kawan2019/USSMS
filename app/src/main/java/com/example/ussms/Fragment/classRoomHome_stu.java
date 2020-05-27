@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,9 @@ public class classRoomHome_stu extends Fragment {
     private FirestoreRecyclerAdapter adapter;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
-    private Button mdownload;
+    private ImageButton mdownload;
+    String cd;
+    long cl;
 
     public classRoomHome_stu() {
         // Required empty public constructor
@@ -66,11 +69,16 @@ public class classRoomHome_stu extends Fragment {
 
         SharedPreferences pref = getActivity().getSharedPreferences("Class", Activity.MODE_PRIVATE);
         String cn = pref.getString("CN","");
+        cd = pref.getString("CD", "");
+        cl = pref.getLong("CL", 0);
+
         if (cn != null)
             Toast.makeText(getContext(),cn,Toast.LENGTH_LONG).show();
-        Query query = fsdb.collection("Users")
-                .document(mAuth.getCurrentUser().getDisplayName())
-                .collection("ClassRoom").document(cn).collection("FILE");
+
+
+        Query query = fsdb.collection("ClassRoom")
+                .document(cd)
+                .collection(cl+"").document(cn).collection("FILE");
 
         //Recycleroption
         FirestoreRecyclerOptions<ClassFile> options = new FirestoreRecyclerOptions.Builder<ClassFile>()
