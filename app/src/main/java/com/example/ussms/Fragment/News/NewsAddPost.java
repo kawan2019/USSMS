@@ -177,11 +177,12 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
         Map<String, Object> dataMap = new HashMap<>();
         for (int i=0; i<savedImagesUri.size(); i++){}
         dataMap.put("Image", savedImagesUri);
-        dataMap.put("PostOwner", mAuth.getCurrentUser().getDisplayName());
+        dataMap.put("PostOwnerName", mAuth.getCurrentUser().getDisplayName());
         dataMap.put("Date", FieldValue.serverTimestamp());
         dataMap.put("Department", department);
         dataMap.put("PostType", "image");
         dataMap.put("Privacy", "Public");
+        dataMap.put("PostOwnerImage", mAuth.getCurrentUser().getPhotoUrl()+"");
         dataMap.put("Description", des);
         fsdb.collection("Posts").document().set(dataMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

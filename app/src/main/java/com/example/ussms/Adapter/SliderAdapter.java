@@ -1,17 +1,16 @@
 package com.example.ussms.Adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.ussms.Model.SliderItem;
 import com.example.ussms.R;
+import com.jgabrielfreitas.core.BlurImageView;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 
 import java.util.ArrayList;
@@ -52,14 +51,14 @@ public class SliderAdapter extends
     public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
 
         SliderItem sliderItem = mSliderItems.get(position);
-
-        viewHolder.textViewDescription.setText(sliderItem.getDescription());
-        viewHolder.textViewDescription.setTextSize(16);
-        viewHolder.textViewDescription.setTextColor(Color.WHITE);
         Glide.with(viewHolder.itemView)
                 .load(sliderItem.getImageUrl())
                 .fitCenter()
-                .into(viewHolder.imageViewBackground);
+                .into(viewHolder.blurImageView);
+        SliderItem sliderItem1 = mSliderItems.get(position);
+        Glide.with(viewHolder.itemView)
+                .load(sliderItem1.getImageUrl())
+                .into(viewHolder.imagefit);
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,22 +70,23 @@ public class SliderAdapter extends
 
     @Override
     public int getCount() {
-        //slider view count could be dynamic size
         return mSliderItems.size();
     }
 
     class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
 
         View itemView;
-        ImageView imageViewBackground;
+       // ImageView imageViewBackground;
         ImageView imageGifContainer;
-        TextView textViewDescription;
+        ImageView imagefit;
+        BlurImageView blurImageView;
 
         public SliderAdapterVH(View itemView) {
             super(itemView);
-            imageViewBackground = itemView.findViewById(R.id.iv_auto_image_slider);
+            blurImageView = itemView.findViewById(R.id.iv_auto_image_slide);
+            imagefit = itemView.findViewById(R.id.iv_auto_image_slider);
             imageGifContainer = itemView.findViewById(R.id.iv_gif_container);
-            textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
+            blurImageView.setBlur(4400);
             this.itemView = itemView;
         }
     }

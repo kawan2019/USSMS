@@ -10,12 +10,14 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.Adapter.SliderAdapter;
 import com.example.ussms.Model.Posts;
@@ -32,6 +34,8 @@ import com.smarteist.autoimageslider.SliderView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,6 +78,19 @@ public class NewsHome extends Fragment implements View.OnClickListener {
             @Override
             protected void onBindViewHolder(@NonNull final NewsHome.UsersViewHolder holder, int i, @NonNull Posts posts) {
                 imageList = (ArrayList<String>) posts.getImagesList();
+                holder.tv_postOwnerName.setText(posts.getPostOwnerName());
+                holder.tv_postOwnerDepartment.setText(posts.getDepartment());
+                holder.igb_like.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                       // holder.igb_like.setImageDrawable(getResources().getDrawable(R.drawable.ic_like));
+                    }
+                });
+
+                CircleImageView user_image_view = holder.cig_postOwner;
+                Glide.with(getContext()).load(posts.getPostOwnerImage()).into(user_image_view);
+
+
                 List<SliderItem> sliderItemList = new ArrayList<>();
                 for (int j = 0; j < imageList.size(); j++) {
                     SliderItem sliderItem = new SliderItem();
@@ -99,8 +116,8 @@ public class NewsHome extends Fragment implements View.OnClickListener {
 
         sheetBehavior = BottomSheetBehavior.from(contentLayout);
         sheetBehavior.setFitToContents(false);
-        sheetBehavior.setHideable(false);//prevents the boottom sheet from completely hiding off the screen
-        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);//initially state to fully expanded
+        sheetBehavior.setHideable(false);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
         filterIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,10 +144,17 @@ public class NewsHome extends Fragment implements View.OnClickListener {
 
     private class UsersViewHolder extends RecyclerView.ViewHolder{
         SliderView sliderView;
+        CircleImageView cig_postOwner;
+        TextView tv_postOwnerName,tv_postOwnerDepartment;
+        ImageButton igb_like;
 
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
             sliderView = itemView.findViewById(R.id.imageSlider);
+            cig_postOwner = itemView.findViewById(R.id.cig_post_owner_i_rc_post);
+            tv_postOwnerName = itemView.findViewById(R.id.tv_post_owner_name_i_rc_post);
+            tv_postOwnerDepartment = itemView.findViewById(R.id.tv_post_owner_department_i_rc_post);
+            igb_like = itemView.findViewById(R.id.igb_like_Rc_post);
 
             adapterr = new SliderAdapter(getContext());
             sliderView.setSliderAdapter(adapterr);

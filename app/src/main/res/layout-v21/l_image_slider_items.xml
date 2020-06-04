@@ -4,13 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <com.jgabrielfreitas.core.BlurImageView
+        android:id="@+id/iv_auto_image_slide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:tint="#90ffffff"
+        />
 
     <ImageView
         android:id="@+id/iv_auto_image_slider"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY" />
-
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/iv_gif_container"
@@ -18,25 +24,5 @@
         android:layout_height="80dp"
         android:layout_gravity="bottom|start"
         android:layout_margin="50dp" />
-
-
-    <FrameLayout
-        android:id="@+id/fl_shadow_container"
-        android:background="@drawable/bg_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-
-        <TextView
-            android:id="@+id/tv_auto_image_slider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="25dp"
-            android:padding="6dp"
-            android:textColor="#FFF"
-            android:textSize="18sp" />
-
-    </FrameLayout>
 
 </FrameLayout>
