@@ -10,7 +10,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.ussms.Model.SliderItem;
 import com.example.ussms.R;
-import com.jgabrielfreitas.core.BlurImageView;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 
 import java.util.ArrayList;
@@ -76,17 +75,17 @@ public class SliderAdapter extends
     class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
 
         View itemView;
-       // ImageView imageViewBackground;
         ImageView imageGifContainer;
         ImageView imagefit;
-        BlurImageView blurImageView;
+        ImageView blurImageView;
 
         public SliderAdapterVH(View itemView) {
             super(itemView);
             blurImageView = itemView.findViewById(R.id.iv_auto_image_slide);
             imagefit = itemView.findViewById(R.id.iv_auto_image_slider);
             imageGifContainer = itemView.findViewById(R.id.iv_gif_container);
-            blurImageView.setBlur(4400);
+            blurImageView.setAlpha(12);
+
             this.itemView = itemView;
         }
     }

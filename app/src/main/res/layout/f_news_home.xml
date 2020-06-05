@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#fff"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#000000">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -23,13 +20,14 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:background="#00FFFFFF"
-                android:src="@drawable/ic_arrow_back_black_24dp" />
+                android:tint="#000"
+                android:src="@drawable/ic_home_black_24dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="HOME"
-                    android:textColor="#fff"
+                    android:textColor="#000"
                     android:textStyle="bold"
                     android:textSize="22dp"/>
             <ImageButton
@@ -37,13 +35,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00FFFFFF"
+                android:tint="#000"
                 android:layout_marginRight="25dp"
-                android:src="@drawable/ic_filter_list_white_24dp"
+                android:src="@drawable/ic_menu_send"
                 android:layout_alignParentRight="true" />
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:id="@+id/Relative_f_home">
         <HorizontalScrollView
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -123,62 +127,11 @@
                     android:text="Islamic👳🏼‍♂️"/>
             </LinearLayout>
         </HorizontalScrollView>
-    </LinearLayout>
-    <LinearLayout
-        android:paddingTop="60dp"
-        android:id="@+id/contentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:background="@drawable/bg_head_news_home"
-            android:padding="10dp"
-            android:layout_marginBottom="-8dp"
-            android:elevation="4dp">
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="7dp"
-                android:background="#00FFFFFF"
-                android:src="@drawable/ic_menu_send"
-                android:layout_alignParentEnd="true"/>
-        </RelativeLayout>
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swiperefresh"
-            android:clickable="true"
-            android:layout_marginTop="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#2196F3">
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:background="#f8f8f8"
-                    android:layout_height="90dp">
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-                </HorizontalScrollView>
+    </RelativeLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rc_posts_news_home"
                     android:layout_width="match_parent"
-                    android:layout_height="900dp"
+                    android:layout_height="match_parent"
                     android:background="#fff"/>
-            </LinearLayout>
-            </ScrollView>
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</LinearLayout>

@@ -1,18 +1,25 @@
 package com.example.ussms.Fragment.News;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +44,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -45,13 +54,18 @@ public class NewsHome extends Fragment implements View.OnClickListener {
     FirestoreRecyclerAdapter adapter;
     private View view;
     ImageButton filterIcon;
+    private static final int TYPE_HEADER = 2;
+    private static final int TYPE_ITEM = 1;
     ArrayList<String> imageList = new ArrayList<String>();
     private BottomSheetBehavior<LinearLayout> sheetBehavior;
     private SliderAdapter adapterr;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
+    private ProgressDialog progressDialog;
+    RelativeLayout relativeLayout;
     public NewsHome() {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,6 +74,8 @@ public class NewsHome extends Fragment implements View.OnClickListener {
         recyclerView = view.findViewById(R.id.rc_posts_news_home);
         Query query = fsdb.collection("Posts");
 
+        view.findViewById(R.id.backIcon).setOnClickListener(this);
+         relativeLayout = view.findViewById(R.id.Relative_f_home);
         FirestoreRecyclerOptions<Posts> options = new FirestoreRecyclerOptions.Builder<Posts>()
                 .setQuery(query, Posts.class)
                 .build();
@@ -105,27 +121,55 @@ public class NewsHome extends Fragment implements View.OnClickListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
-
-
-
-        Context context = getContext();
-        if(context != null){ }
-        filterIcon = view.findViewById(R.id.filterIcon);
-        view.findViewById(R.id.backIcon).setOnClickListener(this);
-        LinearLayout contentLayout = view.findViewById(R.id.contentLayout);
-
-        sheetBehavior = BottomSheetBehavior.from(contentLayout);
-        sheetBehavior.setFitToContents(false);
-        sheetBehavior.setHideable(false);
-        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-        filterIcon.setOnClickListener(new View.OnClickListener() {
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onClick(View v) {
-                toggleFilters();
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dx == 0) {
+                    View v = recyclerView.getChildAt(0);
+                    int offset = (v == null) ? 0 : v.getTop();
+                    if (offset == 0) {
+
+                            relativeLayout.setVisibility(View.VISIBLE);
+
+                        // reached the top: visible header and footer
+                        Log.i(TAG, "top reached");
+                        Toast.makeText(getContext(),"Top",Toast.LENGTH_SHORT).show();
+                        //setViewStatus(footer, header, View.VISIBLE);
+                    }else {
+                        if (recyclerView.getVisibility() == View.VISIBLE){
+                            relativeLayout.setVisibility(View.GONE);
+                        }
+
+                    }
+                }
             }
         });
 
+//        Context context = getContext();
+//        if(context != null){ }
+//        filterIcon = view.findViewById(R.id.filterIcon);
+//        view.findViewById(R.id.backIcon).setOnClickListener(this);
+//        LinearLayout contentLayout = view.findViewById(R.id.contentLayout);
+//
+//        sheetBehavior = BottomSheetBehavior.from(contentLayout);
+//        sheetBehavior.setFitToContents(false);
+//        sheetBehavior.setHideable(false);
+//        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//
+//        filterIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                toggleFilters();
+//            }
+//        });
+//
 
         return view;
     }
@@ -186,7 +230,32 @@ public class NewsHome extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId()==R.id.backIcon){
+            showDialog();
             startActivity(new Intent(getContext(), MainActivity.class));
+            dismissDialog();
+
         }
+    }
+    private void showDialog(){
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+    private  void dismissDialog(){
+        if (progressDialog!=null){
+            progressDialog.dismiss();
+        }
+    }
+
+
+    private void hideViews() {
+        relativeLayout.animate().translationY(-relativeLayout.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    private void showViews() {
+        relativeLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+
     }
 }
