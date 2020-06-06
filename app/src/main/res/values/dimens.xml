@@ -23,5 +23,6 @@
     <dimen name="list_item__horizontal_padding">16dp</dimen>
     <dimen name="list_item__vertical_padding">12dp</dimen>
     <dimen name="list_item_icon__horizontal_padding">32dp</dimen>
+    <dimen name="spacing">50dp</dimen>
 
 </resources>

@@ -41,18 +41,6 @@ public class News extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-                if (tab.getPosition() == 0) {
-
-                }else if (tab.getPosition() == 1) {
-
-                }else if (tab.getPosition() == 2) {
-
-                } else if (tab.getPosition() == 3) {
-                    badge.setVisible(false);
-                }else if (tab.getPosition() == 4) {
-
-                }else {
-                }
             }
 
             @Override

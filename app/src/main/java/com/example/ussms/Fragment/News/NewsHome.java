@@ -3,6 +3,7 @@ package com.example.ussms.Fragment.News;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,13 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -32,19 +30,28 @@ import com.example.ussms.Model.SliderItem;
 import com.example.ussms.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.firebase.ui.firestore.SnapshotParser;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.SetOptions;
+import com.pedromassango.doubleclick.DoubleClick;
+import com.pedromassango.doubleclick.DoubleClickListener;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,7 +68,11 @@ public class NewsHome extends Fragment implements View.OnClickListener {
     private SliderAdapter adapterr;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private ProgressDialog progressDialog;
-    RelativeLayout relativeLayout;
+    LinearLayout relativeLayout;
+    FirebaseAuth mAuth;
+    boolean liked = false;
+    private String filterDep;
+
     public NewsHome() {
     }
 
@@ -72,14 +83,23 @@ public class NewsHome extends Fragment implements View.OnClickListener {
 
         view = (View) inflater.inflate(R.layout.f_news_home, container, false);
         recyclerView = view.findViewById(R.id.rc_posts_news_home);
-        Query query = fsdb.collection("Posts");
-
+        Query query = fsdb.collection("Posts").orderBy("Date");
+        mAuth = FirebaseAuth.getInstance();
         view.findViewById(R.id.backIcon).setOnClickListener(this);
          relativeLayout = view.findViewById(R.id.Relative_f_home);
-        FirestoreRecyclerOptions<Posts> options = new FirestoreRecyclerOptions.Builder<Posts>()
-                .setQuery(query, Posts.class)
-                .build();
 
+        FirestoreRecyclerOptions<Posts> options = new FirestoreRecyclerOptions.Builder<Posts>()
+                .setLifecycleOwner(this)
+                .setQuery(query,new SnapshotParser<Posts>() {
+                    @NonNull
+                    @Override
+                    public Posts parseSnapshot(@NonNull DocumentSnapshot snapshot) {
+                        Posts products = snapshot.toObject(Posts.class);
+                        String itemId = snapshot.getId();
+                        products.setId(itemId);
+                        return products;
+                    }
+                }).build();
 
 
         adapter = new FirestoreRecyclerAdapter<Posts, NewsHome.UsersViewHolder>(options) {
@@ -92,14 +112,43 @@ public class NewsHome extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final NewsHome.UsersViewHolder holder, int i, @NonNull Posts posts) {
+            protected void onBindViewHolder(@NonNull final NewsHome.UsersViewHolder holder, int i, @NonNull final Posts posts) {
+
+
+
+                isLiked(posts.getId(),holder.igb_like);
+
                 imageList = (ArrayList<String>) posts.getImagesList();
                 holder.tv_postOwnerName.setText(posts.getPostOwnerName());
                 holder.tv_postOwnerDepartment.setText(posts.getDepartment());
+                holder.tv_postDescreiption.setText(posts.getDescription());
+                holder.tv_postOwnerNameDes.setText(posts.getPostOwnerName());
+
+                holder.sliderView.setOnClickListener(new DoubleClick(new DoubleClickListener() {
+                            @Override
+                            public void onSingleClick(View view) {
+
+                            }
+
+                            @Override
+                            public void onDoubleClick(View view) {
+                                like(posts.getId());
+                            }
+                        }));
+
                 holder.igb_like.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                       // holder.igb_like.setImageDrawable(getResources().getDrawable(R.drawable.ic_like));
+                        int pos = holder.getAdapterPosition();
+                        if (isLiked(posts.getId())){
+                            unlike(posts.getId());
+                            holder.igb_like.setImageDrawable(getResources().getDrawable(R.drawable.ic_heartsease));
+                            //Toast.makeText(getContext(),holder.getAdapterPosition()+"",Toast.LENGTH_SHORT).show();
+
+                        }else {
+                            like(posts.getId());
+
+                        }
                     }
                 });
 
@@ -121,6 +170,9 @@ public class NewsHome extends Fragment implements View.OnClickListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.spacing);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
+
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -130,21 +182,16 @@ public class NewsHome extends Fragment implements View.OnClickListener {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
-                if (dx == 0) {
+                if (dx >= 0) {
                     View v = recyclerView.getChildAt(0);
                     int offset = (v == null) ? 0 : v.getTop();
-                    if (offset == 0) {
+                    if (offset >= 1 ) {
+                        relativeLayout.animate().translationY(0).setDuration(200);
 
-                            relativeLayout.setVisibility(View.VISIBLE);
 
-                        // reached the top: visible header and footer
-                        Log.i(TAG, "top reached");
-                        Toast.makeText(getContext(),"Top",Toast.LENGTH_SHORT).show();
-                        //setViewStatus(footer, header, View.VISIBLE);
                     }else {
                         if (recyclerView.getVisibility() == View.VISIBLE){
-                            relativeLayout.setVisibility(View.GONE);
+                            relativeLayout.animate().translationY(-200).setDuration(0);
                         }
 
                     }
@@ -174,6 +221,70 @@ public class NewsHome extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    private void isLiked(String id, final ImageButton igb_like) {
+        fsdb.collection("Posts")
+                .document(id).collection("Like")
+                .document(mAuth.getCurrentUser().getDisplayName())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            igb_like.setImageDrawable(getResources().getDrawable(R.drawable.ic_like));
+                        }else{
+                            igb_like.setImageDrawable(getResources().getDrawable(R.drawable.ic_heartsease));
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Error",e.getMessage());
+                    }
+                });
+    }
+
+    private void unlike(String id) {
+        fsdb.collection("Posts").document(id).collection("Like")
+                .document(mAuth.getCurrentUser().getDisplayName()).delete();
+
+    }
+
+    private void like(String id) {
+
+        Map map = new HashMap();
+        map.put("Username",mAuth.getCurrentUser().getDisplayName());
+        map.put("Time", FieldValue.serverTimestamp());
+        map.put("UserPhoto",mAuth.getCurrentUser().getPhotoUrl().toString());
+        fsdb.collection("Posts").document(id).collection("Like")
+                .document(mAuth.getCurrentUser().getDisplayName()).set(map, SetOptions.merge());
+
+    }
+
+    private Boolean isLiked(String id) {
+        fsdb.collection("Posts")
+                .document(id).collection("Like")
+                .document(mAuth.getCurrentUser().getDisplayName())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            liked = true;
+                        }else{
+                            liked = false;
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Error",e.getMessage());
+                    }
+                });
+        return liked;
+    }
+
 
     @Override
     public void onStart() {
@@ -189,15 +300,20 @@ public class NewsHome extends Fragment implements View.OnClickListener {
     private class UsersViewHolder extends RecyclerView.ViewHolder{
         SliderView sliderView;
         CircleImageView cig_postOwner;
-        TextView tv_postOwnerName,tv_postOwnerDepartment;
+        TextView tv_postOwnerName,tv_postOwnerDepartment,tv_postOwnerNameDes,tv_postDescreiption;
         ImageButton igb_like;
+        RelativeLayout Relative ;
 
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
             sliderView = itemView.findViewById(R.id.imageSlider);
             cig_postOwner = itemView.findViewById(R.id.cig_post_owner_i_rc_post);
             tv_postOwnerName = itemView.findViewById(R.id.tv_post_owner_name_i_rc_post);
+            tv_postOwnerNameDes = itemView.findViewById(R.id.tv_post_owner_name_i_Rc_post);
+            tv_postDescreiption = itemView.findViewById(R.id.tv_des_Rc_post);
             tv_postOwnerDepartment = itemView.findViewById(R.id.tv_post_owner_department_i_rc_post);
+            Relative = itemView.findViewById(R.id.Relative_l_rd_post);
+
             igb_like = itemView.findViewById(R.id.igb_like_Rc_post);
 
             adapterr = new SliderAdapter(getContext());
@@ -250,12 +366,22 @@ public class NewsHome extends Fragment implements View.OnClickListener {
     }
 
 
-    private void hideViews() {
-        relativeLayout.animate().translationY(-relativeLayout.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-    }
+    public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+        private int space;
 
-    private void showViews() {
-        relativeLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        public SpacesItemDecoration(int space) {
+            this.space = space;
+        }
 
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+
+            // Add top margin only for the first item to avoid double space between items
+            if (parent.getChildLayoutPosition(view) == 0) {
+                outRect.top = space;
+            } else {
+
+            }
+        }
     }
 }

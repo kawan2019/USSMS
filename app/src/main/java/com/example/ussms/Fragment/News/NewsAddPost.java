@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,12 +28,13 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.asksira.bsimagepicker.BSImagePicker;
+import com.bumptech.glide.Glide;
 import com.example.ussms.Adapter.PickedImagesAdapter;
+import com.example.ussms.Adapter.SliderAdapter;
 import com.example.ussms.Model.AddPost;
+import com.example.ussms.Model.SliderItem;
 import com.example.ussms.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,11 +48,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.smarteist.autoimageslider.SliderView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -59,7 +64,7 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
     private static final int PICK_IMAGE_REQUEST_CODE = 2;
     Button btnPost;
     ImageButton igbPickImage;
-    RecyclerView recyclerView;
+    //RecyclerView recyclerView;
     List<AddPost> imagesList;
     List<String> savedImagesUri;
     PickedImagesAdapter adapter;
@@ -69,11 +74,14 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
     EditText ed_des;
     ProgressDialog progressDialog;
     String des;
+    private SliderAdapter adapterr;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     int counter;
     private String department;
     private FragmentActivity myContext;
-
+    private SliderView sliderView;
+    TextView tv_on,tv_od;
+    CircleImageView cig_o;
     public NewsAddPost() {
     }
 
@@ -87,17 +95,17 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
         mAuth = FirebaseAuth.getInstance();
         savedImagesUri = new ArrayList<>();
 
-        igbPickImage = view.findViewById(R.id.igb_add_post_news_add);
-        btnPost = view.findViewById(R.id.btn_post_news_add);
-        ed_des = view.findViewById(R.id.ed_des_news_add);
-        imagesList = new ArrayList<>();
+        cig_o = (CircleImageView) view.findViewById(R.id.cig_post_owner_i_addPost);
+        tv_on = view.findViewById(R.id.tv_post_owner_name_i_addPost);
+        Glide.with(getContext()).load(mAuth.getCurrentUser().getPhotoUrl()).fitCenter().into(cig_o);
+        tv_on.setText(mAuth.getCurrentUser().getDisplayName());
+        sliderView = view.findViewById(R.id.imageSlider_addPost);
+        adapterr = new SliderAdapter(getContext());
 
-        recyclerView = view.findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new PickedImagesAdapter(getContext(), imagesList);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
+        igbPickImage = view.findViewById(R.id.igb_add_post_news_add);
+        btnPost = view.findViewById(R.id.btn_post_addPost);
+        ed_des = view.findViewById(R.id.ed_dis_addPost);
+        imagesList = new ArrayList<>();
 
         fsdb.collection("Users").document(mAuth.getCurrentUser().getDisplayName()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -216,7 +224,7 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
         BSImagePicker pickerDialog = new BSImagePicker.Builder("com.example.ussms.Fragment.News")
                 .setMaximumDisplayingImages(Integer.MAX_VALUE)
                 .isMultiSelect()
-                .setMinimumMultiSelectCount(3)
+                .setMinimumMultiSelectCount(1)
                 .setMaximumMultiSelectCount(6)
                 .build();
         pickerDialog.show(getChildFragmentManager(), "picker");
@@ -311,6 +319,18 @@ public class NewsAddPost extends Fragment implements BSImagePicker.OnMultiImageS
     public void onMultiImageSelected(List<Uri> uriList, String tag) {
         showDialog();
         for (int i = 0; i<uriList.size();i++){
+
+            List<SliderItem> sliderItemList = new ArrayList<>();
+            for (int j = 0; j < uriList.size(); j++) {
+                SliderItem sliderItem = new SliderItem();
+
+                sliderItem.setImageUrl(String.valueOf(uriList.get(j)));
+                sliderItemList.add(sliderItem);
+            }
+            adapterr.renewItems(sliderItemList);
+
+            sliderView.setSliderAdapter(adapterr);
+
             imagesList.add(new AddPost(getFileNameFromUri(uriList.get(i)), uriList.get(i)));
         }
         dismissDialog();

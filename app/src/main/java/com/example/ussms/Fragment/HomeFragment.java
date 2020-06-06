@@ -10,13 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.ussms.Activity.Class_t;
-import com.example.ussms.Activity.MainActivity;
 import com.example.ussms.Activity.News;
 import com.example.ussms.Activity.classroom_stu;
 import com.example.ussms.R;
@@ -27,8 +27,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.wang.avi.AVLoadingIndicatorView;
 
-import es.dmoral.toasty.Toasty;
 import technolifestyle.com.imageslider.FlipperLayout;
 import technolifestyle.com.imageslider.FlipperView;
 
@@ -40,9 +40,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public String department;
     public int level;
     FirebaseAuth mAuth;
-//    Fragment classroom = new ClassR_t();
+    private AVLoadingIndicatorView avi;
     FirestoreRecyclerAdapter adapter;
     private TextView tv;
+    ImageButton igb_activity_home;
     Handler handler = new Handler();
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
 private String language;
@@ -51,11 +52,13 @@ private String language;
         View root = inflater.inflate(R.layout.f_home, container, false);
         tv = root.findViewById(R.id.tv_noti_f_home);
         fliper = root.findViewById(R.id.fliper);
+        igb_activity_home = root.findViewById(R.id.igb2);
+        igb_activity_home.setOnClickListener(this);
+        igb_activity_home.setVisibility(View.VISIBLE);
         root.findViewById(R.id.igb120).setOnClickListener(this);
-        root.findViewById(R.id.igb2).setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         this.handler.postDelayed(m_Runnable,1000);
-
+        avi = root.findViewById(R.id.avi_igb_activity_home);
         SharedPreferences preferences = this.getActivity().getSharedPreferences("Account", Context.MODE_PRIVATE);
         language = preferences.getString("Type","");
         department = preferences.getString("Dep","");
@@ -80,6 +83,9 @@ private String language;
                 }
                 break;
             case R.id.igb2:
+                igb_activity_home.setVisibility(View.GONE);
+                avi.setVisibility(View.VISIBLE);
+                avi.show();
                 startActivity(new Intent(getContext(), News.class));
                 break;
             default:

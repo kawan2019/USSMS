@@ -43,8 +43,16 @@
         </androidx.appcompat.widget.Toolbar>
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rc_posts_news_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"/>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|enterAlways"
+        android:background="#f8f8f8"
         android:id="@+id/Relative_f_home">
         <HorizontalScrollView
             android:layout_marginTop="5dp"
@@ -53,85 +61,108 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    app:checkedChip="@+id/chip_all_news_home">
         <com.google.android.material.chip.Chip
-            style="@style/Widget.MaterialComponents.Chip.Filter"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:id="@+id/chip_all_news_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textColor="#000000"
-            app:chipStrokeColor="#2196F3"
+            app:chipStrokeColor="#FFC107"
             app:chipStrokeWidth="1dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:text="All 🏫"/>
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textColor="#000000"
+            app:chipStrokeColor="#FFC107"
+            app:chipStrokeWidth="1dp"
+            android:layout_marginRight="3dp"
             android:text="Computer 💻"/>
             <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                app:chipStrokeColor="#2196F3"
+                app:chipStrokeColor="#FFC107"
                 android:padding="5dp"
+                android:layout_marginRight="3dp"
                 app:chipStrokeWidth="1dp"
                 android:text="Law 👩‍⚖️"/>
             <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                app:chipStrokeColor="#2196F3"
+                app:chipStrokeColor="#FFC107"
+                android:layout_marginRight="3dp"
                 android:padding="5dp"
                 app:chipStrokeWidth="1dp"
                 android:text="Physic 👨🏻‍🔬"/>
             <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                app:chipStrokeColor="#2196F3"
+                android:layout_marginRight="3dp"
+                app:chipStrokeColor="#FFC107"
                 android:padding="5dp"
                 app:chipStrokeWidth="1dp"
                 android:text="English 🧑‍🏫"/>
             <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:padding="5dp"
-                app:chipStrokeColor="#2196F3"
+                android:layout_marginRight="3dp"
+                app:chipStrokeColor="#FFC107"
                 app:chipStrokeWidth="1dp"
                 android:text="Arabic 👩‍🏫"/>
                 <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:padding="5dp"
-                    app:chipStrokeColor="#2196F3"
+                    android:layout_marginRight="3dp"
+                    app:chipStrokeColor="#FFC107"
                     app:chipStrokeWidth="1dp"
                     android:text="Engineering 👷‍♀️"/>
                 <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:padding="5dp"
-                    app:chipStrokeColor="#2196F3"
+                    android:layout_marginRight="3dp"
+                    app:chipStrokeColor="#FFC107"
                     app:chipStrokeWidth="1dp"
                     android:text="Social 🐫"/>
                 <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:padding="5dp"
-                    app:chipStrokeColor="#2196F3"
+                    android:layout_marginRight="3dp"
+                    app:chipStrokeColor="#FFC107"
                     app:chipStrokeWidth="1dp"
                     android:text="Islamic👳🏼‍♂️"/>
+                </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
         </HorizontalScrollView>
-    </RelativeLayout>
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rc_posts_news_home"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#fff"/>
+    </LinearLayout>
 
+    </RelativeLayout>
 </LinearLayout>

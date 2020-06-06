@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#E3E1E1"
     android:layout_height="wrap_content"
     android:fillViewport="false">
@@ -90,16 +90,33 @@
                     android:layout_weight="1"
                     android:paddingTop="15dp"
                     android:orientation="vertical">
+                    <RelativeLayout
+                        android:layout_width="75dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+                        <com.wang.avi.AVLoadingIndicatorView
+                            android:id="@+id/avi_igb_activity_home"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            style="@style/AVLoadingIndicatorView"
+                            android:visibility="invisible"
+                            app:indicatorName="BallSpinFadeLoaderIndicator"
+                            app:indicatorColor="#000000"
+                            />
+
+
 
                     <ImageButton
                         android:id="@+id/igb2"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:layout_gravity="center"
+                        android:layout_centerHorizontal="true"
                         android:background="@drawable/image_button_background"
-                        android:src="@drawable/application_setting_ic"
+                        android:src="@drawable/ic_interest"
                         android:contentDescription="@string/todo" />
-
+                    </RelativeLayout>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

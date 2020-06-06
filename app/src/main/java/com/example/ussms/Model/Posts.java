@@ -42,6 +42,16 @@ public class Posts {
     private String Privacy;
     private String PostOwnerImage;
 
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
+
+    private String Id;
+
 
 
 

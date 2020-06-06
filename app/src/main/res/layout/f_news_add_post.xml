@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/cig_post_owner_i_rc_post"
+                    android:id="@+id/cig_post_owner_i_addPost"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
@@ -31,14 +31,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <TextView
-                        android:id="@+id/tv_post_owner_name_i_rc_post"
+                        android:id="@+id/tv_post_owner_name_i_addPost"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:textColor="#000" />
                     <TextView
-                        android:id="@+id/tv_post_owner_department_i_rc_post"
+                        android:id="@+id/tv_post_owner_department_i_addPost"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="italic" />
@@ -65,7 +65,7 @@
     android:layout_height="wrap_content">
 
             <com.smarteist.autoimageslider.SliderView
-                android:id="@+id/imageSlider"
+                android:id="@+id/imageSlider_addPost"
                 android:layout_width="wrap_content"
                 android:layout_height="400dp"
                 android:minHeight="200dp"
@@ -164,6 +164,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="kawan"/>
             <EditText
+                android:id="@+id/ed_dis_addPost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -178,6 +179,7 @@
             android:layout_marginTop="25dp"
             android:orientation="horizontal">
             <Button
+                android:id="@+id/btn_post_addPost"
                 android:layout_width="match_parent"
                 android:layout_weight="3"
                 android:layout_height="wrap_content"
