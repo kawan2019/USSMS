@@ -50,7 +50,7 @@
                     android:layout_height="75dp"
                     android:layout_gravity="center"
                     android:background="@drawable/image_button_background"
-                    android:src="@drawable/application_setting_ic"
+                    android:src="@drawable/ic_comment"
                     android:contentDescription="@string/todo" />
 
                 <TextView
@@ -70,19 +70,20 @@
                 android:orientation="vertical">
 
                 <ImageButton
+                    android:id="@+id/igb2"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_gravity="center"
                     android:background="@drawable/image_button_background"
-                    android:src="@drawable/application_setting_ic"
+                    android:src="@drawable/ic_interest"
                     android:contentDescription="@string/todo" />
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
-                    android:text="@string/home_btn1"
+                    android:text="UniversityActivity"
                     android:textAlignment="center"
                     android:textColor="@color/text_home_color" />
             </LinearLayout>
@@ -94,11 +95,12 @@
                 android:orientation="vertical">
 
                 <ImageButton
+                    android:id="@+id/igb3"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_gravity="center"
                     android:background="@drawable/image_button_background"
-                    android:src="@drawable/application_setting_ic"
+                    android:src="@drawable/ic_heartsease"
                     android:contentDescription="@string/todo" />
 
                 <TextView
@@ -106,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
-                    android:text="@string/home_btn1"
+                    android:text="BTN 3"
                     android:textAlignment="center"
                     android:textColor="@color/text_home_color" />
             </LinearLayout>
@@ -127,6 +129,7 @@
                 android:orientation="vertical">
 
                 <ImageButton
+                    android:id="@+id/igb4"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_gravity="center"
@@ -151,6 +154,7 @@
                 android:orientation="vertical">
 
                 <ImageButton
+                    android:id="@+id/igb5"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_gravity="center"
@@ -175,6 +179,7 @@
                 android:orientation="vertical">
 
                 <ImageButton
+                    android:id="@+id/igb6"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_gravity="center"

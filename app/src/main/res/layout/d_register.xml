@@ -217,7 +217,7 @@
                 android:layout_height="wrap_content"
                 style="@style/AVLoadingIndicatorView"
                 android:visibility="invisible"
-                app:indicatorName="BallPulseIndicator"
+                app:indicatorName="BallSpinFadeLoaderIndicator"
                 app:indicatorColor="#000000" />
 
         </RelativeLayout>

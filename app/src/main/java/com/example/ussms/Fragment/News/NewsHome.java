@@ -114,8 +114,6 @@ public class NewsHome extends Fragment implements View.OnClickListener {
             @Override
             protected void onBindViewHolder(@NonNull final NewsHome.UsersViewHolder holder, int i, @NonNull final Posts posts) {
 
-
-
                 isLiked(posts.getId(),holder.igb_like);
 
                 imageList = (ArrayList<String>) posts.getImagesList();
@@ -132,22 +130,20 @@ public class NewsHome extends Fragment implements View.OnClickListener {
 
                             @Override
                             public void onDoubleClick(View view) {
-                                like(posts.getId());
+                                like(posts.getId(),holder.igb_like);
                             }
                         }));
 
                 holder.igb_like.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int pos = holder.getAdapterPosition();
-                        if (isLiked(posts.getId())){
+                        if (holder.igb_like.getTag()=="Liked"){
                             unlike(posts.getId());
                             holder.igb_like.setImageDrawable(getResources().getDrawable(R.drawable.ic_heartsease));
                             //Toast.makeText(getContext(),holder.getAdapterPosition()+"",Toast.LENGTH_SHORT).show();
 
                         }else {
-                            like(posts.getId());
-
+                            like(posts.getId(),holder.igb_like);
                         }
                     }
                 });
@@ -198,26 +194,6 @@ public class NewsHome extends Fragment implements View.OnClickListener {
                 }
             }
         });
-
-//        Context context = getContext();
-//        if(context != null){ }
-//        filterIcon = view.findViewById(R.id.filterIcon);
-//        view.findViewById(R.id.backIcon).setOnClickListener(this);
-//        LinearLayout contentLayout = view.findViewById(R.id.contentLayout);
-//
-//        sheetBehavior = BottomSheetBehavior.from(contentLayout);
-//        sheetBehavior.setFitToContents(false);
-//        sheetBehavior.setHideable(false);
-//        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//
-//        filterIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                toggleFilters();
-//            }
-//        });
-//
-
         return view;
     }
 
@@ -250,7 +226,7 @@ public class NewsHome extends Fragment implements View.OnClickListener {
 
     }
 
-    private void like(String id) {
+    private void like(String id,final ImageButton igb_like) {
 
         Map map = new HashMap();
         map.put("Username",mAuth.getCurrentUser().getDisplayName());
@@ -258,31 +234,9 @@ public class NewsHome extends Fragment implements View.OnClickListener {
         map.put("UserPhoto",mAuth.getCurrentUser().getPhotoUrl().toString());
         fsdb.collection("Posts").document(id).collection("Like")
                 .document(mAuth.getCurrentUser().getDisplayName()).set(map, SetOptions.merge());
+        igb_like.setImageDrawable(getResources().getDrawable(R.drawable.ic_like));
+        igb_like.setTag("Liked");
 
-    }
-
-    private Boolean isLiked(String id) {
-        fsdb.collection("Posts")
-                .document(id).collection("Like")
-                .document(mAuth.getCurrentUser().getDisplayName())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists()){
-                            liked = true;
-                        }else{
-                            liked = false;
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Error",e.getMessage());
-                    }
-                });
-        return liked;
     }
 
 

@@ -27,23 +27,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.tiper.MaterialSpinner;
 import com.wang.avi.AVLoadingIndicatorView;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,24 +47,14 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     private static final String PHONE_NUMBER = "PHONE_NUMBER";
     private boolean ve = false;
     private AlertDialog  alertDialogAllSet;
-
     private boolean validateDepSp = true;
     private boolean validateLevSp = true;
-    private String username;
-    private String token;
-    private String email, password, fullname;
-    private String who = "STN_1",department;
     private int level_;
-
-    @ServerTimestamp
-    Date time;
+    private String username,token,email, password, fullname, who = "STN_1", department;
     private EditText  edUsernameRegister, edFullNameRegister, edEmailRegister, edPasswordRegister;
-    TextInputLayout hoUsernameRegister, hoEmailRegister;
-
     private Button  btnRegisterRegister, btnOkayAllSet;
-    private MaterialButtonToggleGroup toggleButton;
     private MaterialSpinner spLevelRegister, spDepartmentRegister;
-    private AVLoadingIndicatorView avi, avir;
+    private AVLoadingIndicatorView avir;
     private Integer[] Level = {1, 2, 3, 4};
     private final static String USERNAME = "USERNAME";
     private final static String DEPARTMENT = "DEPARTMENT";
@@ -87,14 +71,10 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
     private final static String TYPE = "TYPE";
     private static final String TAG = "EmailPassword";
     private FirebaseAuth mAuth;
-    private  StorageReference storageReference;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
-    private  Activity c;
 
     public Signup(Activity a) {
         super(a);
-        // TODO Auto-generated constructor stub
-        this.c = a;
     }
 
     @Override
@@ -103,7 +83,7 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
         setContentView(R.layout.d_register);
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) { mAuth.signOut(); }
-        edUsernameRegister = findViewById(R.id.edUsername_register);
+        edUsernameRegister = findViewById(R.id.edUsername_register);;
         edFullNameRegister = findViewById(R.id.edFullname_register);
         edEmailRegister = findViewById(R.id.edEmail_register);
         edPasswordRegister = findViewById(R.id.edPassword_register);
@@ -112,10 +92,6 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
 
         spDepartmentRegister = findViewById(R.id.spDepartment_register);
         spLevelRegister = findViewById(R.id.spLevel_register);
-        toggleButton = findViewById(R.id.tgWho_register);
-        hoUsernameRegister = findViewById(R.id.hoUsername_register);
-        hoEmailRegister = findViewById(R.id.hoEmail_register);
-        storageReference = FirebaseStorage.getInstance().getReference().child("images");
 
         findViewById(R.id.btnClose_register).setOnClickListener(this);
         findViewById(R.id.STN_1).setOnClickListener(this);
@@ -141,7 +117,6 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
                 validateDepSp = true;
             }
         });
-
         spLevelRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
@@ -154,7 +129,6 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
                 validateLevSp = true;
             }
         });
-        avir.setIndicator("BallSpinFadeLoaderIndicator");
         btnRegisterRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,7 +142,6 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
         fullname = edFullNameRegister.getText().toString();
         email = edEmailRegister.getText().toString().trim() + "@gmail.com";
         password = edPasswordRegister.getText().toString();
-        //String date = FieldValue.serverTimestamp().toString();
         if (!TextUtils.isEmpty(username)){
             fsdb.collection("Users")
                     .document(username)
@@ -242,11 +215,6 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
                                                 public void onSuccess(Void aVoid) {
                                                     final String userUid = task.getResult().getUser().getUid();
                                                     if (task.isSuccessful()) {
-
-
-
-
-                                                        // TODO https://firebase.google.com/docs/cloud-messaging/android/client#retrieve-the-current-registration-token.
                                                         Map<String, Object> userMap = new HashMap<>();
                                                         userMap.put(UID, userUid);
                                                         userMap.put(USERNAME, username);
@@ -291,7 +259,6 @@ public class Signup extends AlertDialog implements android.view.View.OnClickList
                                                                                 fsdb.collection("Users").document(username).update(userMap);
                                                                             }
                                                                         });
-
                                                                 final Map<String, Object> logs = new HashMap();
                                                                 logs.put(DATE_CREATION, getDate());
                                                                 logs.put(DID, getDeviceUniqueID());

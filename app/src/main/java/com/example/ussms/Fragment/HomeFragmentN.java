@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.example.ussms.R;
 import com.google.firebase.auth.FirebaseAuth;
 
+import es.dmoral.toasty.Toasty;
 import technolifestyle.com.imageslider.FlipperLayout;
 import technolifestyle.com.imageslider.FlipperView;
 
@@ -27,6 +28,11 @@ public class HomeFragmentN extends Fragment implements View.OnClickListener {
         fliper = root.findViewById(R.id.fliper);
         mAuth = FirebaseAuth.getInstance();
         root.findViewById(R.id.igb1).setOnClickListener(this);
+        root.findViewById(R.id.igb2).setOnClickListener(this);
+        root.findViewById(R.id.igb3).setOnClickListener(this);
+        root.findViewById(R.id.igb4).setOnClickListener(this);
+        root.findViewById(R.id.igb5).setOnClickListener(this);
+        root.findViewById(R.id.igb6).setOnClickListener(this);
 
 
         setLayout();
@@ -72,13 +78,20 @@ public class HomeFragmentN extends Fragment implements View.OnClickListener {
         }
 
     }
+    public void toLoginR(View view) {
 
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.igb1:
-            break;
-
+            case R.id.igb6:
+            case R.id.igb3:
+            case R.id.igb2:
+            case R.id.igb4:
+            case R.id.igb5:
+                Toasty.warning(getContext(),"Login Required.",Toasty.LENGTH_LONG).show();
+                break;
         }
     }
 }

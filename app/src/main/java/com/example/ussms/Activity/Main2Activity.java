@@ -1,18 +1,25 @@
 package com.example.ussms.Activity;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -30,7 +38,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.ussms.Dialogs.Signup;
 import com.example.ussms.Fragment.HomeFragmentN;
 import com.example.ussms.R;
 import com.example.ussms.Utils.AnimationUtil;
@@ -46,8 +53,10 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -85,6 +94,7 @@ public class Main2Activity extends AppCompatActivity {
     MaterialSpinner spLevelRegister, spDepartmentRegister;
     private ImageButton btnCloseRegister, btnCloseLogin;
      Map<String,Object> user_,logs;
+    View dialogView;
     private AVLoadingIndicatorView avi, avir;
     Integer [] Level = {1, 2, 3, 4};
     final static String USERNAME = "USERNAME";
@@ -94,15 +104,19 @@ public class Main2Activity extends AppCompatActivity {
     final static String LEVEL= "LEVEL";
     final static String IMEI = "IMEI";
     final static String DID = "DID";
+    private final static String IMAGE = "IMAGE";
+    private boolean ve = false;
     final static String UID = "UID";
     final static String DATE_CREATION = "DATE_CREATION";
     final static String STATUS = "STATUS";
     final static String TYPE = "TYPE";
     private static final String TAG = "EmailPassword";
+    private static final String PHONE_NUMBER = "PHONE_NUMBER";
     private FirebaseAuth mAuth;
     private FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
     private CollectionReference cr = fsdb.collection("Users");
     private String TOKEN="TOKEN";
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +184,13 @@ public class Main2Activity extends AppCompatActivity {
         edEmailLogin = dialogView.findViewById(R.id.edEmail_login);
         edPasswordLogin = dialogView.findViewById(R.id.edPassword_login);
         btnLoginLogin = dialogView.findViewById(R.id.btnLogin_login);
+
+        dialogView.findViewById(R.id.btnClose_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialogLogin.dismiss();
+            }
+        });
         avi = dialogView.findViewById(R.id.avi);
         avi.setIndicator("BallSpinFadeLoaderIndicator");
 
@@ -186,7 +207,7 @@ public class Main2Activity extends AppCompatActivity {
                     avi.hide();
                     btnLoginLogin.setVisibility(View.VISIBLE);
                 }else if (TextUtils.isEmpty(password)){
-                    AnimationUtil.shakeView(edEmailLogin, Main2Activity.this);
+                    AnimationUtil.shakeView(edPasswordLogin, Main2Activity.this);
                     avi.hide();
                     btnLoginLogin.setVisibility(View.VISIBLE);
                 }else {
@@ -202,11 +223,12 @@ public class Main2Activity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                     if(!documentSnapshot.exists()){
-                                                        hideProgressBar();
+                                                        avi.hide();
+                                                        btnLoginLogin.setVisibility(View.VISIBLE);
                                                         Toasty.error(getApplicationContext(), "An Error", Toast.LENGTH_LONG).show();
                                                     }else{
 
-                                                        avi.hide();
+                                                        hideProgressBar();
                                                         String type = (String) documentSnapshot.get("TYPE");
                                                         String department = (String) documentSnapshot.get("DEPARTMENT");
                                                         long Level = (long) documentSnapshot.get("LEVEL");
@@ -223,7 +245,8 @@ public class Main2Activity extends AppCompatActivity {
                                                                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                                                                         if (!task.isSuccessful()) {
                                                                             Log.w(TAG, "getInstanceId failed", task.getException());
-                                                                            hideProgressBar();
+                                                                            avi.hide();
+                                                                            btnLoginLogin.setVisibility(View.VISIBLE);
                                                                             return;
                                                                         }
                                                                         String token = task.getResult().getToken();
@@ -240,15 +263,12 @@ public class Main2Activity extends AppCompatActivity {
                                                                             @Override
                                                                             public void onFailure(@NonNull Exception e) {
                                                                                 Toasty.error(getApplicationContext(), "An Error", Toast.LENGTH_LONG).show();
-                                                                                hideProgressBar();
+                                                                                avi.hide();
+                                                                                btnLoginLogin.setVisibility(View.VISIBLE);
                                                                             }
                                                                         });
                                                                     }
                                                                 });
-
-
-
-
                                                     }
                                                 }
                                             })
@@ -272,12 +292,14 @@ public class Main2Activity extends AppCompatActivity {
                                             .show();
                                 }
                             }else {
-                                Toast.makeText(getApplicationContext(),task.getException().getMessage()+"",Toast.LENGTH_LONG).show();
+                                Toasty.warning(getApplicationContext(), "Sorry "+task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                 Log.d(TAG,task.getException().getMessage());
-                                hideProgressBar();
+                                avi.hide();
+                                btnLoginLogin.setVisibility(View.VISIBLE);
                             }
-                        }
-                    });
+                            avi.hide();
+                            btnLoginLogin.setVisibility(View.VISIBLE);}
+                        });
                 }
             }
         });
@@ -335,202 +357,331 @@ public class Main2Activity extends AppCompatActivity {
     }
     public void toSignUp(final View view) {
         alertDialogLogin.dismiss();
-        Signup cdd=new Signup(Main2Activity.this);
-        cdd.show();
-//        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
-//        LayoutInflater inflater = this.getLayoutInflater();
-//        View dialogView = inflater.inflate(R.layout.register_dialog, null);
-//        builder.setView(dialogView);
-//
-//        edUsernameRegister = dialogView.findViewById(R.id.edUsername_register);
-//        edFullNameRegister = dialogView.findViewById(R.id.edFullname_register);
-//        edEmailRegister = dialogView.findViewById(R.id.edEmail_register);
-//        edPasswordRegister = dialogView.findViewById(R.id.edPassword_register);
-//        btnRegisterRegister = dialogView.findViewById(R.id.btnRegister_register);
-//        avir = dialogView.findViewById(R.id.avi_register);
-//        spDepartmentRegister = dialogView.findViewById(R.id.spDepartment_register);
-//        spLevelRegister = dialogView.findViewById(R.id.spLevel_register);
-//        toggleButton = dialogView.findViewById(R.id.tgWho_register);
-//        hoUsernameRegister = dialogView.findViewById(R.id.hoUsername_register);
-//        hoEmailRegister = dialogView.findViewById(R.id.hoEmail_register);
-//        dialogView.findViewById(R.id.STN_1).setOnClickListener(this);
-//        dialogView.findViewById(R.id.TCHN_1).setOnClickListener(this);
-//
-//        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-//
-//        ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, Level);
-//        adp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spLevelRegister.setAdapter(adp2);
-//        ArrayAdapter<CharSequence> adp3 = ArrayAdapter.createFromResource(this, R.array.departments_array
-//                , android.R.layout.simple_list_item_1);
-//        adp3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spDepartmentRegister.setAdapter(adp3);
-//
-//        spDepartmentRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
-//                validateDepSp = false;
-//                department = materialSpinner.getSelectedItem().toString();
-//            }
-//            @Override
-//            public void onNothingSelected(MaterialSpinner materialSpinner) {
-//                validateDepSp = true;
-//            }
-//        });
-//        spLevelRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
-//                validateLevSp = false;
-//                level_ = i+1;
-//                Toast.makeText(getApplicationContext(),level_+"",Toast.LENGTH_LONG).show();
-//            }
-//            @Override
-//            public void onNothingSelected(MaterialSpinner materialSpinner) {
-//                validateLevSp = true;
-//            }
-//        });
-//        avir.setIndicator("BallSpinFadeLoaderIndicator");
-//        btnRegisterRegister.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                avir.show();
-//                final boolean[] vu = {false};
-//                btnRegisterRegister.setVisibility(View.INVISIBLE);
-//                username = edUsernameRegister.getText().toString();
-//                fullname = edFullNameRegister.getText().toString();
-//                email = edEmailRegister.getText().toString().trim()+"@uoh.edu.iq";
-//                password = edPasswordRegister.getText().toString();
-//                String date = FieldValue.serverTimestamp().toString();
-//                fsdb.collection("Users")
-//                        .get()
-//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                                if (task.isSuccessful()) {
-//                                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                                        if (document.getId().equalsIgnoreCase(username)){
-//                                            hoUsernameRegister.setError("Already Token");
-//                                            vu[0] = false;
-//                                            break;
-//                                        }else {
-//                                            hoUsernameRegister.setError(null);
-//                                            vu[0] = true;
-//                                        }
-//                                        Log.d(TAG, document.getId()+"");
-//                                    }
-//                                } else {
-//                                    Log.d(TAG, "Error getting documents: ", task.getException());
-//                                }
-//                            }
-//                        });
-//                if ((TextUtils.isEmpty(username)) || (!username.matches("[a-zA-Z._]*")) || (username.length() < 5) || (vu[0])) {
-//                    AnimationUtil.shakeView(edUsernameRegister, Main2Activity.this);
-//                    avir.hide();
-//                    btnRegisterRegister.setVisibility(View.VISIBLE);
-//                } else if ((fullname.length() < 9) || (!fullname.matches("[a-zA-Z ]*"))) {
-//                    AnimationUtil.shakeView(edFullNameRegister, Main2Activity.this);
-//                    avir.hide();
-//                    btnRegisterRegister.setVisibility(View.VISIBLE);
-//                } else if (TextUtils.isEmpty(email)) {
-//                    AnimationUtil.shakeView(edEmailRegister, Main2Activity.this);
-//                    avir.hide();
-//                    btnRegisterRegister.setVisibility(View.VISIBLE);
-//                } else if ((TextUtils.isEmpty(password)) || (password.length() < 8)) {
-//                    AnimationUtil.shakeView(edPasswordRegister, Main2Activity.this);
-//                    avir.hide();
-//                    btnRegisterRegister.setVisibility(View.VISIBLE);
-//                }else if(validateDepSp){
-//                    AnimationUtil.shakeView(spDepartmentRegister, Main2Activity.this);
-//                    avir.hide();
-//                    btnRegisterRegister.setVisibility(View.VISIBLE);
-//                }else if(validateLevSp){
-//                    AnimationUtil.shakeView(spLevelRegister, Main2Activity.this);
-//                    avir.hide();
-//                    btnRegisterRegister.setVisibility(View.VISIBLE);
-//                }else {
-//                    user_ = new HashMap<>();
-//                    logs = new HashMap<>();
-//
-//                    user_.put(USERNAME,username);
-//                    user_.put(EMAIL,email);
-//                    user_.put(FULLNAME,fullname);
-//                    user_.put(DEPARTMENT,department);
-//                    user_.put(LEVEL,level_);
-//                    logs.put(DID,getDeviceUniqueID(Main2Activity.this));
-//                    logs.put(DATE_CREATION,date);
-//                    logs.put(IMEI,getDeviceIMEI());
-//                    user_.put(TYPE,who);
-//                    user_.put(STATUS,false);
-//                    Log.d(TAG, "createAccount:" + email);
-//                    showProgressBar();
-//                    sendInfoToDB(user_,logs);
-//
-//                    fsdb.collection("Users").document(username).set(user_).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task) {
-//                            if (task.isSuccessful()){
-//                                fsdb.collection("Users").document(username).collection("Logs").document("Creation_Log").set(logs).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Void> task) {
-//                                        if (task.isSuccessful()){
-//                                            Log.d(TAG, "lodUserInformation:success");
-//                                            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                                                @Override
-//                                                public void onComplete(@NonNull Task<AuthResult> task) {
-//                                                    if (task.isSuccessful()){
-//                                                        Log.d(TAG, "createUserWithEmail:success");
-//                                                        user_.put(UID,mAuth.getUid());
-//                                                        fsdb.collection("users").document(username).update(user_);
-//                                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//                                                                .setDisplayName(username)
-//                                                                .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-//                                                                .build();
-//                                                        mAuth.getCurrentUser().updateProfile(profileUpdates);
-//                                                        alertDialogRegister.dismiss();
-//                                                        sendEmailVerification();
-//                                                        dialogAllSet();
-//
-//                                                    }else {
-//                                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-//                                                        if (task.getException().getMessage().equalsIgnoreCase("The email address is already in use by another account.")){
-//                                                            hoEmailRegister.setError(task.getException().getMessage()+"");
-//                                                        }else {
-//                                                            hoEmailRegister.setError(null);
-//                                                        }
-//                                                        Toast.makeText(Main2Activity.this, task.getException().getMessage()+"",Toast.LENGTH_SHORT).show();
-//                                                        hideProgressBar();
-//                                                        btnRegisterRegister.setVisibility(View.VISIBLE);
-//                                                    }
-//                                                }
-//                                            });
-//                                        }else {
-//                                            Log.w(TAG, "lodLogsInformation:failure", task.getException());
-//                                            Toast.makeText(Main2Activity.this,task.getException().getMessage()+"", Toast.LENGTH_SHORT).show();
-//                                            hideProgressBar();
-//                                            btnRegisterRegister.setVisibility(View.VISIBLE);
-//
-//                                        }
-//
-//                                    }
-//                                });
-//                            }else{
-//                                Log.w(TAG, "lodUserInformation:failure", task.getException());
-//                                Toast.makeText(Main2Activity.this,task.getException().getMessage()+"", Toast.LENGTH_SHORT).show();
-//                                hideProgressBar();
-//                                btnRegisterRegister.setVisibility(View.VISIBLE);
-//                            }
-//                        }
-//                    });
-//
-//
-//
-//
-//
-//                }
-//            }
-//        });
-//        alertDialogRegister = builder.create();
-//        alertDialogRegister.show();
+        //Signup cdd=new Signup(Main2Activity.this);
+
+       // cdd.show();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
+        LayoutInflater inflater = this.getLayoutInflater();
+        dialogView = inflater.inflate(R.layout.d_register, null);
+        builder.setView(dialogView);
+
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() != null) { mAuth.signOut(); }
+        edUsernameRegister = dialogView.findViewById(R.id.edUsername_register);;
+        edFullNameRegister = dialogView.findViewById(R.id.edFullname_register);
+        edEmailRegister = dialogView.findViewById(R.id.edEmail_register);
+        edPasswordRegister = dialogView.findViewById(R.id.edPassword_register);
+        btnRegisterRegister = dialogView.findViewById(R.id.btnRegister_register);
+        avir = dialogView.findViewById(R.id.avi_register);
+
+        spDepartmentRegister = dialogView.findViewById(R.id.spDepartment_register);
+        spLevelRegister = dialogView.findViewById(R.id.spLevel_register);
+
+        dialogView.findViewById(R.id.btnClose_register).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialogRegister.dismiss();
+            }
+        });
+        dialogView.findViewById(R.id.STN_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                who = "STN_1";
+                validateLevSp = true;
+                spLevelRegister.setVisibility(View.VISIBLE);
+            }
+        });
+        dialogView.findViewById(R.id.TCHN_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                who = "TCHN_1";
+                validateLevSp = false;
+                spLevelRegister.setVisibility(View.GONE);
+            }
+        });
+
+        ArrayAdapter<Integer> adp2 = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, Level);
+        adp2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spLevelRegister.setAdapter(adp2);
+
+        ArrayAdapter<CharSequence> adp3 = ArrayAdapter.createFromResource(this, R.array.departments_array
+                , android.R.layout.simple_list_item_1);
+        adp3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spDepartmentRegister.setAdapter(adp3);
+
+        spDepartmentRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
+                validateDepSp = false;
+                department = materialSpinner.getSelectedItem().toString();
+            }
+            @Override
+            public void onNothingSelected(MaterialSpinner materialSpinner) {
+                validateDepSp = true;
+            }
+        });
+        spLevelRegister.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(MaterialSpinner materialSpinner, View view, int i, long l) {
+                validateLevSp = false;
+                level_ = i + 1;
+                Toast.makeText(getApplicationContext(), level_ + "", Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onNothingSelected(MaterialSpinner materialSpinner) {
+                validateLevSp = true;
+            }
+        });
+        btnRegisterRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProgressBar();
+                validateFilds();
+                btnRegisterRegister.setVisibility(View.GONE);
+            }
+        });
+
+
+
+        alertDialogRegister = builder.create();
+        alertDialogRegister.show();
+    }
+
+
+    private void validateFilds() {
+        username =  edUsernameRegister.getText().toString();
+        fullname = edFullNameRegister.getText().toString();
+        email = edEmailRegister.getText().toString().trim() + "@gmail.com";
+        password = edPasswordRegister.getText().toString();
+        if (!TextUtils.isEmpty(username)){
+            fsdb.collection("Users")
+                    .document(username)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if(!documentSnapshot.exists()){
+                                registerUser();
+                            }else{
+                                Toasty.error(getApplicationContext(), "Username already exists", Toast.LENGTH_SHORT,true).show();
+                                AnimationUtil.shakeView(edUsernameRegister, getApplicationContext());
+                                Log.e("Error",".getMessage()");
+                                avir.hide();
+                                btnRegisterRegister.setVisibility(View.VISIBLE);
+
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("Error",e.getMessage());
+                            btnRegisterRegister.setVisibility(View.VISIBLE);
+                        }
+                    });
+        }else {
+            AnimationUtil.shakeView(edUsernameRegister, getApplicationContext());
+            avir.hide();
+            btnRegisterRegister.setVisibility(View.VISIBLE);
+        }
+        if ((!username.matches("[a-zA-Z._]*")) || (username.length() < 5)) {
+            AnimationUtil.shakeView(edUsernameRegister, getApplicationContext());
+            avir.hide();
+            btnRegisterRegister.setVisibility(View.VISIBLE);
+        } else if ((fullname.length() < 9) || (!fullname.matches("[a-zA-Z ]*"))) {
+            AnimationUtil.shakeView(edFullNameRegister, getApplicationContext());
+            avir.hide();
+            btnRegisterRegister.setVisibility(View.VISIBLE);
+        } else if (TextUtils.isEmpty(email) || (ve)) {
+            AnimationUtil.shakeView(edEmailRegister, getApplicationContext());
+            avir.hide();
+            btnRegisterRegister.setVisibility(View.VISIBLE);
+        } else if ((TextUtils.isEmpty(password)) || (password.length() < 8)) {
+            AnimationUtil.shakeView(edPasswordRegister, getApplicationContext());
+            avir.hide();
+            btnRegisterRegister.setVisibility(View.VISIBLE);
+        } else if (validateDepSp) {
+            AnimationUtil.shakeView(spDepartmentRegister, getApplicationContext());
+            avir.hide();
+            btnRegisterRegister.setVisibility(View.VISIBLE);
+        } else if (validateLevSp) {
+            AnimationUtil.shakeView(spLevelRegister, getApplicationContext());
+            avir.hide();
+            btnRegisterRegister.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void registerUser(){
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull final Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Map<String, Object> usernameMap = new HashMap<String, Object>();
+                    usernameMap.put(USERNAME, username);
+                    fsdb.collection("Users")
+                            .document(username)
+                            .set(usernameMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    task.getResult()
+                                            .getUser()
+                                            .sendEmailVerification()
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    final String userUid = task.getResult().getUser().getUid();
+                                                    if (task.isSuccessful()) {
+                                                        Map<String, Object> userMap = new HashMap<>();
+                                                        userMap.put(UID, userUid);
+                                                        userMap.put(USERNAME, username);
+                                                        userMap.put(FULLNAME, fullname);
+                                                        userMap.put(IMAGE, "https://firebasestorage.googleapis.com/v0/b/ussms-1c788.appspot.com/o/Defaults%2FPngItem_2145309.png?alt=media&token=e47460f0-12aa-4f95-819a-5ee70d602ebd");
+                                                        userMap.put(EMAIL, email);
+                                                        userMap.put(DEPARTMENT, department);
+                                                        userMap.put(LEVEL, level_);
+                                                        userMap.put(TYPE, who);
+                                                        userMap.put(TOKEN, token);
+                                                        userMap.put(STATUS, false);
+
+                                                        fsdb.collection("Users").document(username).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+
+                                                                mAuth.getCurrentUser().sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Toasty.success(getApplicationContext(), "Verification email sent", Toasty.LENGTH_SHORT, true).show();
+                                                                    }
+                                                                });
+
+                                                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                                        .setDisplayName(username)
+                                                                        .setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/ussms-1c788.appspot.com/o/Defaults%2FPngItem_2145309.png?alt=media&token=e47460f0-12aa-4f95-819a-5ee70d602ebd"))
+                                                                        .build();
+                                                                mAuth.getCurrentUser().updateProfile(profileUpdates);
+
+                                                                FirebaseInstanceId.getInstance().getInstanceId()
+                                                                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                                                if (!task.isSuccessful()) {
+                                                                                    Log.w(TAG, "getInstanceId failed", task.getException());
+                                                                                    return;
+                                                                                }
+                                                                                String token = task.getResult().getToken();
+                                                                                Map<String, Object> userMap = new HashMap<>();
+                                                                                Log.d(TAG,token);
+                                                                                userMap.put(TOKEN, token);
+                                                                                fsdb.collection("Users").document(username).update(userMap);
+                                                                            }
+                                                                        });
+                                                                final Map<String, Object> logs = new HashMap();
+                                                                logs.put(DATE_CREATION, getDate());
+                                                                logs.put(DID, getDeviceUniqueID());
+                                                                logs.put(IMEI, getDeviceIMEI());
+                                                                logs.put(PHONE_NUMBER, getPhoneNumber());
+                                                                fsdb.collection("Users").document(username).collection("Logs").document("Creation").set(logs);
+                                                                alertDialogRegister.dismiss();
+                                                                mAuth.signOut();
+                                                                dialogAllSet();
+
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Toasty.error(getApplicationContext(), "Error: " + e.getMessage(), Toasty.LENGTH_SHORT, true).show();
+                                                                avir.hide();
+                                                                btnRegisterRegister.setVisibility(View.VISIBLE);
+                                                            }
+                                                        });
+
+                                                    }else {
+                                                        Toasty.error(getApplicationContext(), "Error: " + task.getException().getMessage(), Toasty.LENGTH_SHORT, true).show();
+                                                        avir.hide();
+                                                        btnRegisterRegister.setVisibility(View.VISIBLE);
+                                                    }
+
+                                                }
+
+                                            });
+                                    avir.hide();
+                                    btnRegisterRegister.setVisibility(View.VISIBLE);
+                                }
+
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    task.getResult().getUser().delete();
+                                    avir.hide();
+                                    btnRegisterRegister.setVisibility(View.VISIBLE);
+                                }
+                            });
+                }else {
+                    if (task.getException().getMessage().equalsIgnoreCase("The email address is already in use by another account.")){
+                        Log.d(TAG,task.getException().getMessage()+"");
+                        Toasty.error(getApplicationContext(),"This email already used.",Toasty.LENGTH_LONG,true).show();
+                        avir.hide();
+                        btnRegisterRegister.setVisibility(View.VISIBLE);
+                    }else {
+                        Toasty.error(getApplicationContext(),"Error, Please Check Network Connection.",Toasty.LENGTH_LONG,true).show();
+                        avir.hide();
+                        btnRegisterRegister.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            }
+        });
+    }
+    private String getDate() {return FieldValue.serverTimestamp().toString();}
+    private String getPhoneNumber() {
+        String mPhoneNumber = "";
+        TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getApplicationContext(),"Please Allow",Toast.LENGTH_LONG).show();
+        }else {mPhoneNumber = tMgr.getLine1Number();}
+        return mPhoneNumber;
+    }
+    public String getDeviceUniqueID(){
+        String device_unique_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        return device_unique_id;
+    }
+    public String getDeviceIMEI() {
+        String deviceUniqueIdentifier = null;
+        TelephonyManager tm = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+        if (null != tm) {
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getApplicationContext(),"Please Allow ",Toast.LENGTH_LONG).show();
+                return null;
+            }
+            deviceUniqueIdentifier = tm.getDeviceId();
+        }
+        if (null == deviceUniqueIdentifier || 0 == deviceUniqueIdentifier.length()) {
+            deviceUniqueIdentifier = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return deviceUniqueIdentifier;
+    }
+    private void dialogAllSet(){
+        alertDialogRegister.dismiss();
+        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this, R.style.CustomAlertDialog);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogViewe = inflater.inflate(R.layout.d_allset, null);
+        builder.setView(dialogViewe);
+        btnOkayAllSet = dialogViewe.findViewById(R.id.btnOkay_allset);
+        btnOkayAllSet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialogAllSet.dismiss();
+            }
+        });
+        alertDialogAllSet = builder.create();
+        alertDialogAllSet.show();
     }
 
     private void dialogResendEmail(){
